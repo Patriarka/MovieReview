@@ -5,7 +5,7 @@ import {
     Navigate
 } from 'react-router-dom';
 
-import SignUp from './pages/sign-up';
+import SignUp from './pages/signup';
 import Login from './pages/login';
 import Profile from './pages/profile';
 import EditProfile from './pages/edit-profile';
@@ -50,7 +50,7 @@ export default function Router() {
                     element={<Login />} 
                 />
                 <Route 
-                    path="/sign-up" 
+                    path="/signup" 
                     element={<SignUp />} 
                 />
                 <Route 
