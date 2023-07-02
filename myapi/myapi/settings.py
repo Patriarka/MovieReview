@@ -81,6 +81,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'usuarios.authentication.MyJWTAuthentication'
     ],
+    'DATE_FORMAT': "%d/%m/%Y",
+    'DATE_INPUT_FORMATS': ["%d-%m-%Y"],
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

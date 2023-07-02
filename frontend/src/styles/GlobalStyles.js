@@ -6,7 +6,7 @@ export const GlobalStyles = createGlobalStyle`
     font-family: 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #909090;
+    background-color: #e8e8e8;
   }
 
   :root {
