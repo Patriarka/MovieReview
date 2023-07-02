@@ -1,128 +1,77 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 
-import axios from 'axios';
-import styles from './styles.css';
+import { StyledInput, StyledSelect } from "../../styles/pages/HomeStyles.js";
 
-import Publication from "../../components/Publication";
-import Header from "../../components/header";
-import HeaderDesktop from "../../components/headerDesktop";
+import {
+  SearchOutlined,
+  VideoCameraOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 
-import Menu from "../../components/menu";
-import ViewPublication from "../../components/ViewPublication";
+import logo from "../../assets/logotype.png";
 
-import api from "../../api";
-
-import Trending from "../../components/Trending"
-import TrendingCarousel from "../../components/TrendingCarousel";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-    const [publications, setPublications] = useState([]);
-    const [page, setPage] = useState(1);
-    const isFirstPageRef = useRef(false);
+  const navigate = useNavigate();
 
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
+  const [searchOption, setSearchOption] = useState("movies");
 
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
-        };
+  const handleSearch = async (value) => {
+    if (searchOption === "users") {
+      navigate(`/search?user=${value}`);
+    } else {
+      navigate(`/search?query=${value}`);
+    }
+  };
 
-        window.addEventListener('resize', handleResize);
+  return (
+    <div className="container mx-auto max-w-[1580px]">
+      <header className="bg-white w-full shadow-md">
+        <div className="max-w-[1280px] flex items-center justify-between">
+          <img className="cursor-pointer max-w-[56px]" src={logo} alt="logo" />
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [])
-
-    const fetchFeed = async () => {
-        if (page === 1) {
-            isFirstPageRef.current = true;
-        }
-
-        const response = await api.get(`feed/?page=${page}`);
-        setPublications((prevPublications) => [
-            ...prevPublications,
-            ...response.data.results,
-        ]);
-    };
-
-    useEffect(() => {
-        if (isFirstPageRef.current === false || page !== 1) {
-            fetchFeed();
-        }
-    }, [page]);
-
-    const handleScroll = () => {
-        const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-        
-        if (scrollTop + clientHeight >= scrollHeight - 0) {
-            setPage((prevPage) => prevPage + 1);
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-
-    var idUser = localStorage.getItem('idUser');
-
-    console.log("aqui", publications)
-
-    return (
-        <>
-            {(window.innerWidth > 760) ?
-                <HeaderDesktop />
-                :
-
-                <Header />
-            }
-            <div className="content-home">
-                {windowSize.width < 680
-                    ?
-                    (
-                        <Menu />
-                    )
-                    :
-                    <div className="home-left-content">
-                        <Menu />
-                    </div>
+          <div className="max-w-[420px] m-0">
+            <StyledInput.Group compact>
+              <StyledInput
+                prefix={<SearchOutlined />}
+                placeholder={
+                  searchOption === "movies"
+                    ? "Pesquisar Filmes"
+                    : "Pesquisar Usuários"
                 }
-                
-                <div className="content-box-home">
-                    <Publication />
-                    <TrendingCarousel />
-                    {publications.length > 0 && (publications.map((publication, index) => (
-                        <ViewPublication
-                            key={index}
-                            userID={publication.user_id}
-                            idPost={publication?.id}
-                            idMovie={publication.movie_id}
-                            rating={publication.review}
-                            critic={publication.pub_text}
-                            image={publication?.imgur_link}
-                            date={publication.date}
-                            myPub={(publication.user_id === parseInt(idUser)) ? true : false}
-                            id={publication.id}
-                        />
-                    )))}
-                </div>
+                onPressEnter={(e) => handleSearch(e.target.value)}
+              />
+              <StyledSelect
+                defaultValue="movies"
+                className="max-w-[120px]"
+                onChange={(value) => setSearchOption(value)}
+              >
+                <StyledSelect.Option value="movies">
+                  <div className="flex items-center justify-start m-0">
+                    <VideoCameraOutlined className="mr-1" /> Filmes
+                  </div>
+                </StyledSelect.Option>
+                <StyledSelect.Option value="users">
+                  <div className="flex items-center justify-start m-0">
+                    <UserOutlined className="mr-1" /> Usuários
+                  </div>
+                </StyledSelect.Option>
+              </StyledSelect>
+            </StyledInput.Group>
+          </div>
+        </div>
+      </header>
 
-                <div className="home-right-content">
-                    <Trending />
-                </div>
-            </div>
-        </>
-    )
-}
+      <div className="mx-auto flex">
+        <div className="w-1/4"></div>
+
+        <div className="w-1/2"></div>
+
+        <div className="w-1/4"></div>
+      </div>
+    </div>
+  );
+};
 
 export default Home;
-

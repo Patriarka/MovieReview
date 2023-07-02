@@ -45,7 +45,7 @@
     border-radius: 8px;
 }
 
-@media (max-width: 760px) {
+/* @media (max-width: 760px) {
     .search-container {
         padding: 12px;
     }
@@ -88,4 +88,4 @@
         width: 70px;
         height: 110px;
     }
-}
+} */
