@@ -20,16 +20,13 @@ const { TextArea } = Input;
 
 const Publication = () => {
   const [modalVisible, setModalVisible] = useState(false);
+
   const [inputValue, setInputValue] = useState("");
 
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const [rating, setRating] = useState(0);
-
-  const handleRatingChange = (value) => {
-    setRating(value);
-  };
 
   const debouncedSearch = useRef(
     debounce(async (value) => {
@@ -56,6 +53,9 @@ const Publication = () => {
   const handleCloseModal = () => {
     setModalVisible(false);
     setInputValue("");
+    setSelectedMovie(null)
+    setMovies([])
+    setRating(0)
   };
 
   const handleConfirm = async () => {
@@ -72,7 +72,6 @@ const Publication = () => {
 
     const formData = new FormData();
 
-    // formData.append("image", selectedFile);
     formData.append("review", data.review);
     formData.append("pub_text", data.pub_text);
     formData.append("user_id", data.user_id);
@@ -84,6 +83,7 @@ const Publication = () => {
       .post("/publicacoes/", data)
       .then((response) => {
         toast.success("Publicação feita com sucesso!");
+        handleCloseModal()
       })
       .catch((error) => {
         toast.error("Erro ao publicar. Por favor, tente novamente.");
@@ -103,7 +103,7 @@ const Publication = () => {
         <div className="w-full pl-6">
           <StyledInput
             placeholder="Escreva sua Crítica"
-            onFocus={handleOpenModal}
+            onClick={handleOpenModal}
             readOnly
           />
           <Modal
@@ -112,7 +112,7 @@ const Publication = () => {
             onCancel={handleCloseModal}
             footer={[
               <div className="pt-4 flex justify-between">
-                <StyledRate value={rating} onChange={handleRatingChange} />
+                <StyledRate value={rating} onChange={(value) => setRating(value)} />
 
                 <StyledPublicationButton
                   className="bg-pink-500 font-white"
