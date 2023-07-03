@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 
-import { Input, Modal, Select } from "antd";
+import { Input, Modal, Select, message, Upload } from "antd";
+
+import { InboxOutlined } from "@ant-design/icons";
 
 import debounce from "lodash/debounce";
 
@@ -18,6 +20,8 @@ import { toast } from "react-toastify";
 
 const { TextArea } = Input;
 
+const { Dragger } = Upload;
+
 const Publication = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -27,6 +31,25 @@ const Publication = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const [rating, setRating] = useState(0);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (info) => {
+    const { status, originFileObj } = info.file;
+    if (status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (status === "done") {
+      message.success(`${info.file.name} Arquivo carregado com sucesso.`);
+      setSelectedFile(originFileObj);
+    } else if (status === "error") {
+      message.error(`${info.file.name} Falha no carregamento do arquivo.`);
+    }
+  };
+
+  const props = {
+    onChange: handleFileChange,
+  };
 
   const debouncedSearch = useRef(
     debounce(async (value) => {
@@ -53,9 +76,9 @@ const Publication = () => {
   const handleCloseModal = () => {
     setModalVisible(false);
     setInputValue("");
-    setSelectedMovie(null)
-    setMovies([])
-    setRating(0)
+    setSelectedMovie(null);
+    setMovies([]);
+    setRating(0);
   };
 
   const handleConfirm = async () => {
@@ -83,7 +106,7 @@ const Publication = () => {
       .post("/publicacoes/", data)
       .then((response) => {
         toast.success("Publicação feita com sucesso!");
-        handleCloseModal()
+        handleCloseModal();
       })
       .catch((error) => {
         toast.error("Erro ao publicar. Por favor, tente novamente.");
@@ -112,7 +135,10 @@ const Publication = () => {
             onCancel={handleCloseModal}
             footer={[
               <div className="pt-4 flex justify-between">
-                <StyledRate value={rating} onChange={(value) => setRating(value)} />
+                <StyledRate
+                  value={rating}
+                  onChange={(value) => setRating(value)}
+                />
 
                 <StyledPublicationButton
                   className="bg-pink-500 font-white"
@@ -130,7 +156,6 @@ const Publication = () => {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Escreva sua Crítica"
             />
-
             <div>
               <Select
                 allowClear
@@ -157,7 +182,7 @@ const Publication = () => {
               </Select>
 
               {selectedMovie && (
-                <div className="bg-white border-2 rounded-xl p-2 flex items-center shadow-lg text-black">
+                <div className="bg-white border-2 rounded-xl p-2 mb-4 flex items-center shadow-lg text-black">
                   <img
                     src={`https://image.tmdb.org/t/p/w300${selectedMovie.poster_path}`}
                     alt={selectedMovie.title}
@@ -167,6 +192,13 @@ const Publication = () => {
                 </div>
               )}
             </div>
+
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Selecione ou arraste uma imagem</p>
+            </Dragger>
           </Modal>
         </div>
       </div>
