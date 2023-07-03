@@ -4,6 +4,11 @@ import { Input, Button, Rate } from "antd";
 const StyledInput = styled(Input)`
   background-color: #f3f4f6;
   padding: 8px;
+
+  &:hover,
+  &:focus {
+    border-color: #bdbdbd !important;
+  }
 `;
 
 const StyledPublicationButton = styled(Button)`
@@ -13,7 +18,6 @@ const StyledPublicationButton = styled(Button)`
   border: none;
 
   && {
-
     &:hover,
     &:focus {
       background-color: #e90074 !important;
@@ -22,7 +26,6 @@ const StyledPublicationButton = styled(Button)`
   }
 `;
 
-const StyledRate = styled(Rate)`
-`;
+const StyledRate = styled(Rate)``;
 
 export { StyledInput, StyledPublicationButton, StyledRate };

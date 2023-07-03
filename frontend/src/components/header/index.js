@@ -12,10 +12,10 @@ import { useNavigate, Link } from "react-router-dom";
 
 import logo from "../../assets/logotype.png";
 
-const Header = () => {
+const Header = ({ searchOptionAlreadyDefined="movies" }) => {
   const navigate = useNavigate();
 
-  const [searchOption, setSearchOption] = useState("movies");
+  const [searchOption, setSearchOption] = useState(searchOptionAlreadyDefined);
 
   const handleSearch = async (value) => {
     switch (searchOption) {
@@ -36,7 +36,7 @@ const Header = () => {
         <Link to="/">
           <img className="cursor-pointer max-w-[56px]" src={logo} alt="logo" />
         </Link>
-        
+
         <div className="max-w-[420px] m-0">
           <StyledInput.Group compact>
             <StyledInput
@@ -49,7 +49,7 @@ const Header = () => {
               onPressEnter={(e) => handleSearch(e.target.value)}
             />
             <StyledSelect
-              defaultValue="movies"
+              defaultValue={searchOption}
               className="max-w-[120px]"
               onChange={(value) => setSearchOption(value)}
             >

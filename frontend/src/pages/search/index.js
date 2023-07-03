@@ -27,7 +27,7 @@ const Search = () => {
 
   const params = new URLSearchParams(search);
 
-  const query = params.get("query");
+  const query = params.get("movie");
   const user = params.get("user");
 
   const [beforeQuery, setBeforeQuery] = useState("");
@@ -35,6 +35,8 @@ const Search = () => {
 
   const [movies, setMovies] = useState([]);
   const [users, setUsers] = useState([]);
+
+  const searchOptionAlreadyDefined = query === null ? "users" : "movies"
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -147,7 +149,7 @@ const Search = () => {
     <>
 
 
-        <Header />
+        <Header searchOptionAlreadyDefined={searchOptionAlreadyDefined} />
 
       <div className="search-container">
         <div className="search-content">

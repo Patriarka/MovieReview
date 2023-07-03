@@ -2,7 +2,7 @@ import React from "react";
 
 import Header from "../../components/header";
 
-import Publication from '../../components/Publication';
+import Publication from "../../components/Publication";
 
 const Home = () => {
   return (
@@ -10,7 +10,9 @@ const Home = () => {
       <Header />
 
       <div className="mx-auto flex">
-        <div className="w-1/4"></div>
+        <div className="w-1/4">
+ 
+        </div>
 
         {/* Design do componente de publication, fazer a seção do meio sem cor mesmo. Utilizar mais espaçamento da header para telas pequenas. Arrumar a pesquisa para filmes */}
         <div className="w-1/2 bg-white rounded-xl m-8 shadow-lg">
