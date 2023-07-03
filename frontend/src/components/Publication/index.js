@@ -2,14 +2,19 @@ import React, { useState, useRef } from "react";
 
 import { Input, Modal, Select } from "antd";
 
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 
 import axios from "axios";
+
+import api from "../../api.js";
 
 import {
   StyledInput,
   StyledPublicationButton,
+  StyledRate,
 } from "../../styles/components/PublicationStyle.js";
+
+import { toast } from "react-toastify";
 
 const { TextArea } = Input;
 
@@ -19,6 +24,12 @@ const Publication = () => {
 
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+  const [rating, setRating] = useState(0);
+
+  const handleRatingChange = (value) => {
+    setRating(value);
+  };
 
   const debouncedSearch = useRef(
     debounce(async (value) => {
@@ -47,9 +58,36 @@ const Publication = () => {
     setInputValue("");
   };
 
-  const handleConfirm = () => {
-    // fazer a lógica de enviar a req de publicação
-    handleCloseModal();
+  const handleConfirm = async () => {
+    let id = localStorage.getItem("idUser");
+    id = id.substring(1, id.length - 1);
+
+    const data = {
+      review: rating,
+      pub_text: inputValue,
+      user_id: parseInt(id),
+      movie_id: selectedMovie.id,
+      movie_title: selectedMovie.original_title,
+    };
+
+    const formData = new FormData();
+
+    // formData.append("image", selectedFile);
+    formData.append("review", data.review);
+    formData.append("pub_text", data.pub_text);
+    formData.append("user_id", data.user_id);
+    formData.append("date", data.date);
+    formData.append("movie_id", data.movie_id);
+    formData.append("movie_title", data.movie_title);
+
+    await api
+      .post("/publicacoes/", data)
+      .then((response) => {
+        toast.success("Publicação feita com sucesso!");
+      })
+      .catch((error) => {
+        toast.error("Erro ao publicar. Por favor, tente novamente.");
+      });
   };
 
   return (
@@ -72,10 +110,10 @@ const Publication = () => {
             title="Criar Crítica"
             open={modalVisible}
             onCancel={handleCloseModal}
-            onOk={handleConfirm}
             footer={[
-              <div className="pt-4">
-                {/* Seleção de nota */}
+              <div className="pt-4 flex justify-between">
+                <StyledRate value={rating} onChange={handleRatingChange} />
+
                 <StyledPublicationButton
                   className="bg-pink-500 font-white"
                   key="Publicar"
@@ -119,19 +157,16 @@ const Publication = () => {
               </Select>
 
               {selectedMovie && (
-                <div
-                  className="bg-white border-2 rounded-xl p-2 flex items-center shadow-lg text-black"
-                >
+                <div className="bg-white border-2 rounded-xl p-2 flex items-center shadow-lg text-black">
                   <img
                     src={`https://image.tmdb.org/t/p/w300${selectedMovie.poster_path}`}
                     alt={selectedMovie.title}
-                    style={{ borderRadius: 8, width: 40, marginRight: 16 }}
+                    className="rounded-xl w-12 mr-2"
                   />
                   <h3>{selectedMovie.title}</h3>
                 </div>
               )}
             </div>
-            {/* Seleção de Imagem */}
           </Modal>
         </div>
       </div>

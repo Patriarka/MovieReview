@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Input, Button } from "antd";
+import { Input, Button, Rate } from "antd";
 
 const StyledInput = styled(Input)`
   background-color: #f3f4f6;
@@ -22,4 +22,7 @@ const StyledPublicationButton = styled(Button)`
   }
 `;
 
-export { StyledInput, StyledPublicationButton };
+const StyledRate = styled(Rate)`
+`;
+
+export { StyledInput, StyledPublicationButton, StyledRate };
