@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/header'
 import HeaderDesktop from "../../components/headerDesktop";
 import SuperCritico from '../../components/SuperCritico'
-import ViewPublication from "../../components/ViewPublication";
+import Publication from "../../components/Publication";
 import axios from 'axios';
 import CardFollower from "../../components/CardFollower";
 
@@ -180,7 +180,7 @@ const Profile = () => {
                         </Link>
                     </div>
                     {publications.length > 0 && (publications.map((publication, index) => (
-                        <ViewPublication
+                        <Publication
                             key={index}
                             userID={publication.user_id}
                             idPost={publication?.id}

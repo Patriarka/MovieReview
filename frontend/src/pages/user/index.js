@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import SuperCritico from '../../components/SuperCritico'
 import FollowUnfollow from "../../components/Follow-Unfollow";
 
-import ViewPublication from "../../components/ViewPublication";
+import Publication from "../../components/Publication";
 
 import { Link, useLocation } from "react-router-dom";
 
@@ -230,7 +230,7 @@ const User = () => {
                         </Link>
                     </div>
                     {publications.length > 0 && (publications.map((publication, index) => (
-                        <ViewPublication
+                        <Publication
                             key={index}
                             userID={publication.user_id}
                             idPost={publication?.id}

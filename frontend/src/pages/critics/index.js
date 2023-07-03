@@ -8,7 +8,7 @@ import Menu from "../../components/menu";
 
 import api from "../../api";
 
-import ViewPublication from "../../components/ViewPublication";
+import Publication from "../../components/Publication";
 
 import { useParams } from 'react-router-dom';
 
@@ -97,7 +97,7 @@ const Critics = () => {
                         ></div>
                     </div>
                     {publications.map((publication) => (
-                        <ViewPublication
+                        <Publication
                             userID={publication.user_id}
                             idPost={publication?.id}
                             idMovie={publication.movie_id}

@@ -1,207 +1,136 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import "./styles.css";
 
-import { Input, Modal, Select, message, Upload } from "antd";
+import userImage from "../../assets/user-default.png";
 
-import { InboxOutlined } from "@ant-design/icons";
+import { LikeOutlined, DislikeOutlined, CommentOutlined } from "@ant-design/icons";
 
-import debounce from "lodash/debounce";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-import api from "../../api.js";
+import api from "../../api";
 
-import {
-  StyledInput,
-  StyledPublicationButton,
-  StyledRate,
-} from "../../styles/components/PublicationStyle.js";
+const Publication = ({
+  userID,
+  postID,
+  movieID,
+  rating,
+  pubText,
+  image,
+  pubDate,
+  isMyPub,
+}) => {
+  const [userPublicationOwner, setUserPublicationOwner] = useState(null);
+  const [moviePublication, setMoviePublication] = useState(null);
+  const [showPoster, setShowPoster] = useState(false);
 
-import { toast } from "react-toastify";
+  const navigate = useNavigate();
 
-const { TextArea } = Input;
+  const showPosterHandler = () => {
+    setShowPoster(true);
+  };
 
-const { Dragger } = Upload;
+  const hidePosterHandler = () => {
+    setShowPoster(false);
+  };
 
-const Publication = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const [inputValue, setInputValue] = useState("");
-
-  const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-
-  const [rating, setRating] = useState(0);
-
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (info) => {
-    const { status, originFileObj } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} Arquivo carregado com sucesso.`);
-      setSelectedFile(originFileObj);
-    } else if (status === "error") {
-      message.error(`${info.file.name} Falha no carregamento do arquivo.`);
+  const posterMouseEnterHandler = () => {
+    if (!showPoster) {
+      setShowPoster(true);
     }
   };
 
-  const props = {
-    onChange: handleFileChange,
+  const posterMouseLeaveHandler = () => {
+    if (showPoster) {
+      setShowPoster(false);
+    }
   };
 
-  const debouncedSearch = useRef(
-    debounce(async (value) => {
-      if (value.length > 0) {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${process.env.REACT_APP_TMDB_API_KEY}&query=${value}&language=pt-BR`
-        );
-        const results = response.data.results;
-        setMovies(results);
-      } else {
-        setMovies([]);
+  const handleProfile = () => {
+    const url = `/user/${userID}`;
+    navigate(url);
+  };
+
+  const handleMovie = () => {
+    const url = `/movie/${movieID}`;
+    navigate(url);
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`usuarios/${userID}/`);
+        setUserPublicationOwner(response.data);
+      } catch (error) {
+        console.log(error);
       }
-    }, 300)
-  ).current;
-
-  const handleClear = () => {
-    setSelectedMovie(null);
-  };
-
-  const handleOpenModal = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    setInputValue("");
-    setSelectedMovie(null);
-    setMovies([]);
-    setRating(0);
-  };
-
-  const handleConfirm = async () => {
-    let id = localStorage.getItem("idUser");
-    id = id.substring(1, id.length - 1);
-
-    const data = {
-      review: rating,
-      pub_text: inputValue,
-      user_id: parseInt(id),
-      movie_id: selectedMovie.id,
-      movie_title: selectedMovie.original_title,
     };
 
-    const formData = new FormData();
+    fetchUserData();
+  }, [userID]);
 
-    formData.append("review", data.review);
-    formData.append("pub_text", data.pub_text);
-    formData.append("user_id", data.user_id);
-    formData.append("date", data.date);
-    formData.append("movie_id", data.movie_id);
-    formData.append("movie_title", data.movie_title);
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=pt-BR`;
+      const response = await axios.get(url);
+      setMoviePublication(response.data);
+      console.log(response.data);
+    };
 
-    await api
-      .post("/publicacoes/", data)
-      .then((response) => {
-        toast.success("Publicação feita com sucesso!");
-        handleCloseModal();
-      })
-      .catch((error) => {
-        toast.error("Erro ao publicar. Por favor, tente novamente.");
-      });
-  };
+    fetchData();
+  }, [movieID]);
 
   return (
-    <div className="w-full rounded-xl p-8">
-      <div className="flex items-center">
+    <div className="w-full bg-white rounded-xl mt-2 pb-4 pl-2 pr-4 mb-12 shadow-lg">
+      <div className="flex items-center p-4 gap-4">
         <img
-          className="w-14 h-14 rounded-full object-cover"
+          className="w-11 h-11 rounded-full object-cover"
           src={
-            "https://www.cnnbrasil.com.br/wp-content/uploads/2021/06/21995_47022457A67E1FF5.jpg"
+            userPublicationOwner?.profile_image
+              ? userPublicationOwner?.profile_image
+              : userImage
           }
           alt="user"
         />
-        <div className="w-full pl-6">
-          <StyledInput
-            placeholder="Escreva sua Crítica"
-            onClick={handleOpenModal}
-            readOnly
-          />
-          <Modal
-            title="Criar Crítica"
-            open={modalVisible}
-            onCancel={handleCloseModal}
-            footer={[
-              <div className="pt-4 flex justify-between">
-                <StyledRate
-                  value={rating}
-                  onChange={(value) => setRating(value)}
-                />
-
-                <StyledPublicationButton
-                  className="bg-pink-500 font-white"
-                  key="Publicar"
-                  onClick={handleConfirm}
-                >
-                  Publicar
-                </StyledPublicationButton>
-              </div>,
-            ]}
+        <div>
+          <h1
+            className="cursor-pointer hover:text-gray-500"
+            onClick={handleProfile}
           >
-            <TextArea
-              rows={4}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Escreva sua Crítica"
-            />
-            <div>
-              <Select
-                allowClear
-                showSearch
-                onClear={handleClear}
-                onSearch={debouncedSearch}
-                onSelect={(value, option) => {
-                  const [id, title] = value.split("-");
-                  setSelectedMovie({ id, title, ...option.data });
-                }}
-                value={selectedMovie?.title}
-                className="w-full mt-2 mb-2"
-                placeholder="Digite o nome de um filme"
-              >
-                {movies.map((movie) => (
-                  <Select.Option
-                    key={movie.id}
-                    value={`${movie.id}-${movie.title}`}
-                    data={movie}
-                  >
-                    {movie.title}
-                  </Select.Option>
-                ))}
-              </Select>
-
-              {selectedMovie && (
-                <div className="bg-white border-2 rounded-xl p-2 mb-4 flex items-center shadow-lg text-black">
-                  <img
-                    src={`https://image.tmdb.org/t/p/w300${selectedMovie.poster_path}`}
-                    alt={selectedMovie.title}
-                    className="rounded-xl w-12 mr-2"
-                  />
-                  <h3>{selectedMovie.title}</h3>
-                </div>
-              )}
-            </div>
-
-            <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Selecione ou arraste uma imagem</p>
-            </Dragger>
-          </Modal>
+            {userPublicationOwner?.nickname}
+          </h1>
+          <h1 className="text-gray-400 text-sm">
+            Crítica de
+            <span
+              className="cursor-pointer hover:text-gray-500 ml-1 transition duration-300"
+              onMouseEnter={showPosterHandler}
+              onMouseLeave={hidePosterHandler}
+              onClick={handleMovie}
+            >
+              {moviePublication?.title}
+            </span>
+          </h1>
         </div>
       </div>
+      <div className="ml-5 pr-8 w-full max-h-40 overflow-y-auto">
+        <p className="overflow-wrap break-word text-justify">{pubText}</p>
+      </div>
+
+      {/* Colocar uma imagem caso tenha */}
+      
+
+      {/* <div className="flex items-center justify-center gap-8">
+        <div className="hover:text-gray-500 flex items-center justify-between gap-2 cursor-pointer">
+          <LikeOutlined /> Curtir
+        </div>
+        <div className="flex items-center justify-between gap-2 cursor-pointer">
+          <DislikeOutlined /> Descurtir
+        </div>
+        <div className="flex items-center justify-between gap-2 cursor-pointer">
+          <CommentOutlined /> Comentar
+        </div>
+      </div> */}
     </div>
   );
 };

@@ -8,7 +8,7 @@ import Menu from "../../components/menu";
 
 import api from "../../api";
 
-import ViewPublication from "../../components/ViewPublication";
+import Publication from "../../components/Publication";
 
 import { useParams, Link } from 'react-router-dom';
 
@@ -125,7 +125,7 @@ const FilmReviews = () => {
                         ></div>
                     </div>
                     {publications.length > 0 && (publications.map((publication, index) => (
-                        <ViewPublication
+                        <Publication
                             key={index}
                             userID={publication.user_id}
                             idPost={publication?.id}
