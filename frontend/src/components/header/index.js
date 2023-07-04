@@ -34,7 +34,7 @@ const Header = ({ searchOptionAlreadyDefined="movies" }) => {
     <header className="bg-white w-full shadow-md">
       <div className="max-w-[1280px] flex items-center justify-between">
         <Link to="/">
-          <img className="cursor-pointer max-w-[56px]" src={logo} alt="logo" />
+          <img className="cursor-pointer max-h-[42px] max-w-[38px]" src={logo} alt="logo" />
         </Link>
 
         <div className="max-w-[420px] m-0">

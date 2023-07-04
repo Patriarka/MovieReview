@@ -75,7 +75,6 @@ const Publication = ({
       const url = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=pt-BR`;
       const response = await axios.get(url);
       setMoviePublication(response.data);
-      console.log(response.data);
     };
 
     fetchData();

@@ -32,24 +32,24 @@ const CreatePublication = () => {
 
   const [rating, setRating] = useState(0);
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  // const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFileChange = (info) => {
-    const { status, originFileObj } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} Arquivo carregado com sucesso.`);
-      setSelectedFile(originFileObj);
-    } else if (status === "error") {
-      message.error(`${info.file.name} Falha no carregamento do arquivo.`);
-    }
-  };
+  // const handleFileChange = (info) => {
+  //   const { status, originFileObj } = info.file;
+  //   if (status !== "uploading") {
+  //     console.log(info.file, info.fileList);
+  //   }
+  //   if (status === "done") {
+  //     message.success(`${info.file.name} Arquivo carregado com sucesso.`);
+  //     setSelectedFile(originFileObj);
+  //   } else if (status === "error") {
+  //     message.error(`${info.file.name} Falha no carregamento do arquivo.`);
+  //   }
+  // };
 
-  const props = {
-    onChange: handleFileChange,
-  };
+  // const props = {
+  //   onChange: handleFileChange,
+  // };
 
   const debouncedSearch = useRef(
     debounce(async (value) => {
@@ -193,12 +193,12 @@ const CreatePublication = () => {
               )}
             </div>
 
-            <Dragger {...props}>
+            {/* <Dragger {...props}>
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
               <p className="ant-upload-text">Selecione ou arraste uma imagem</p>
-            </Dragger>
+            </Dragger> */}
           </Modal>
         </div>
       </div>
