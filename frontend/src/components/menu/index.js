@@ -1,55 +1,44 @@
-import React, {useState} from "react";
-import './styles.css'
-import { AiFillHome } from 'react-icons/ai';
-import { BsFillBookmarkStarFill } from 'react-icons/bs';
-import { BiLogOut } from 'react-icons/bi';
-import { CgProfile } from 'react-icons/cg';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
 
-import api from '../../api';
+import { HomeOutlined, UserOutlined, LogoutOutlined, StarOutlined, EyeOutlined } from "@ant-design/icons";
 
-const Menu = () => {
-    const navigate = useNavigate();
+import { StyledMenuItem, StyledMenu } from '../../styles/pages/HomeStyles';
 
-    async function goHome(){
-        navigate("/")
-    }
+import { Layout } from "antd";
 
-    async function goProfile(){
-        navigate("/profile")
-    }
+import { Link } from "react-router-dom";
 
-    const handleLogout = () => {
-        let refresh = localStorage.getItem("refreshTokenUser")
+const { Sider } = Layout;
 
-        refresh = refresh.substring(1, refresh.length - 1);
+const Menu = ({ selectedOption }) => {
 
-        const body = {
-            "refresh": refresh
-        }
-
-        api.post("/logout/", body)
-            .then((res) => {
-                localStorage.setItem("tokenUser", "")
-                localStorage.setItem("refreshTokenUser", "")
-                navigate("/login");
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
-    return (
-        <>
-            <div className="content-menu"></div>
-            <div className="menu-contrast">
-                <div className="menu-contrast">
-                    <div className="inside-menu" onClick={goHome}><AiFillHome className="icon"/><p>Home</p></div>
-                    <div className="inside-menu" onClick={goProfile}><CgProfile className="icon"/><p>Perfil</p></div>
-                    <div style={{color: '#e90074'}} className="inside-menu" onClick={handleLogout}><BiLogOut className="icon"/><p>Sair</p></div>
-                </div>
-            </div>
-        </>
+    return(
+        <Layout
+            style={{ minHeight: "100vh", backgroundColor: "transparent" }}
+          >
+            <Sider width={"90%"} style={{ backgroundColor: "transparent" }}>
+              <StyledMenu
+                mode="inline"
+                defaultSelectedKeys={selectedOption}
+              >
+                <StyledMenuItem key="1" icon={<HomeOutlined />}>
+                  <Link to="/">Início</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="2" icon={<UserOutlined />}>
+                  <Link to="/profile">Perfil</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="3" icon={<EyeOutlined />}>
+                  <Link to="/watchlist">Watchlist</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="4" icon={<StarOutlined />}>
+                  <Link to="/favoritos">Favoritos</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="5" icon={<LogoutOutlined />}>
+                  <Link to="">Sair</Link>
+                </StyledMenuItem>
+              </StyledMenu>
+            </Sider>
+          </Layout>
     )
 }
 

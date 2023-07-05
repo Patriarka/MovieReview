@@ -22,27 +22,31 @@ const Trending = () => {
   }, []);
 
   return (
-    <div className="w-80 mx-auto p-8 rounded-xl mt-10 pl-4 pr-4">
-      {superReviewers.length > 0 &&
-        superReviewers.slice(0, 5).map((superReviewer, index) => {
-          return (
-            <div className="flex">
-              {/* <img
-                className="image-user"
-                alt="user"
-                src={superReviewer?.profile_image}
-              />*/}
-              <Link
-                to={`/user/${superReviewer.id}`}
-                style={{ textDecoration: "none" }}
-              >
-                <p>{superReviewer.nickname}</p>
-              </Link> 
-            </div>
-          );
-        })}
+    <div className="mx-auto mt-10 ml-4 flex-col items-center justify-center">
+      {/* <h2 className="text-lg font-bold">Super Críticos</h2> */}
+
+     
     </div>
   );
 };
 
 export default Trending;
+
+// {superReviewers.length > 0 &&
+//   superReviewers.slice(0, 5).map((superReviewer, index) => {
+//     return (
+//       <div className="flex">
+//         {/* <img
+//           className="image-user"
+//           alt="user"
+//           src={superReviewer?.profile_image}
+//         /> */}
+//         <Link
+//           to={`/user/${superReviewer.id}`}
+//           style={{ textDecoration: "none" }}
+//         >
+//           <p>{superReviewer.nickname}</p>
+//         </Link> 
+//       </div>
+//     );
+//   })}
