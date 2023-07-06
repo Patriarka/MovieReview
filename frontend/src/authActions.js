@@ -1,5 +1,7 @@
 import api from "./api";
 
+import axios from "axios";
+
 export const login = (credentials) => {
   return async (dispatch) => {
     try {
@@ -41,28 +43,27 @@ export const logout = (body) => {
   return { type: "LOGOUT" };
 };
 
-export const refreshToken = () => {
+export const refreshToken = (config) => {
   return async (dispatch) => {
-    let access = localStorage.getItem('tokenUser');
     let refresh = localStorage.getItem('refreshTokenUser');
 
-    access = access.substring(1, access.length - 1)
     refresh = refresh.substring(1, refresh.length - 1)
 
     const headers = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${access}`,
     };
-
+    
     try {
-      const response = await api.post('/api/token/refresh/', { refresh }, { headers });
-      const { accessToken } = response.data;
+      const response = await axios.post('http://localhost:8000/api/token/refresh/', { refresh: refresh }, { headers });
+      const accessToken = response.data.access;
 
       localStorage.setItem("tokenUser", JSON.stringify(accessToken));
 
+      config.headers.Authorization = `Bearer ${accessToken}`;
+
       dispatch({ type: "REFRESH_TOKEN_SUCCESS", payload: accessToken });
 
-      return accessToken;
+      return { response, error: null };
     } catch (error) {
       dispatch({ type: "REFRESH_TOKEN_FAILURE", payload: error.message });
 
