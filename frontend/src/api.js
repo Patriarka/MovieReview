@@ -43,7 +43,7 @@ api.interceptors.request.use(
 
     if (access && refresh) {
       try {
-        await axios.post('http://localhost:8000//api/token/verify/', { token: access }, { headers });
+        await axios.post('http://localhost:8000/api/token/verify/', { token: access }, { headers });
       } catch (error) {
         if (error.response.status === 401) {
           try {

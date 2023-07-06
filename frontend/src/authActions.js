@@ -41,17 +41,32 @@ export const logout = (body) => {
   return { type: "LOGOUT" };
 };
 
-// export const refreshToken = (refreshToken) => {
-//   return async (dispatch) => {
-//     try {
-//       const response = await api.post("/refresh-token", { refreshToken });
-//       const { accessToken } = response.data;
+export const refreshToken = () => {
+  return async (dispatch) => {
+    let access = localStorage.getItem('tokenUser');
+    let refresh = localStorage.getItem('refreshTokenUser');
 
-//       localStorage.setItem("tokenUser", JSON.stringify(accessToken));
+    access = access.substring(1, access.length - 1)
+    refresh = refresh.substring(1, refresh.length - 1)
 
-//       dispatch({ type: "REFRESH_TOKEN_SUCCESS", payload: accessToken });
-//     } catch (error) {
-//       dispatch({ type: "REFRESH_TOKEN_FAILURE", payload: error.message });
-//     }
-//   };
-// };
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${access}`,
+    };
+
+    try {
+      const response = await api.post('/api/token/refresh/', { refresh }, { headers });
+      const { accessToken } = response.data;
+
+      localStorage.setItem("tokenUser", JSON.stringify(accessToken));
+
+      dispatch({ type: "REFRESH_TOKEN_SUCCESS", payload: accessToken });
+
+      return accessToken;
+    } catch (error) {
+      dispatch({ type: "REFRESH_TOKEN_FAILURE", payload: error.message });
+
+      throw error;
+    }
+  };
+};
