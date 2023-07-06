@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import Header from "../../components/header";
 import Menu from "../../components/menu";
@@ -14,6 +14,7 @@ const Movie = () => {
 
   const [movie, setMovie] = useState({});
   const [streamings, setStreamings] = useState([]);
+  const [trailerUrl, setTrailerUrl] = useState('');
 
   useEffect(() => {
     const fetchMovieData = async () => {
@@ -28,8 +29,26 @@ const Movie = () => {
       setStreamings(response.data.results.BR?.flatrate || []);
     };
 
+    const fetchTrailerData = async () => {
+      try {
+        const urlPT = `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=pt-BR`;
+        const responsePT = await axios.get(urlPT);
+        
+        if (responsePT.data.results.length > 0) {
+            setTrailerUrl(`https://www.youtube.com/embed/${responsePT.data.results[0]?.key}?=autoplay=1`);
+        } else {
+          const urlUS = `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`;
+          const responseUS = await axios.get(urlUS);
+          setTrailerUrl(`https://www.youtube.com/embed/${responseUS.data.results[0]?.key}?=autoplay=1`);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchMovieData();
     fetchStreamingsData();
+    fetchTrailerData();
   }, [id]);
 
   return (
@@ -60,9 +79,12 @@ const Movie = () => {
                 }
                 alt={movie.title}
               />
-              <div className="h-50 w-full ml-2 rounded-xl bg-black">
-                Trailer
-              </div>
+              <iframe
+                title="trailer"
+                src={trailerUrl}
+                className="h-50 w-full ml-2 rounded-xl"
+                allowFullScreen
+              />
             </div>
 
             <div className="flex gap-2">
@@ -76,7 +98,7 @@ const Movie = () => {
                 <p>Nenhum gênero encontrado.</p>
               )}
             </div>
-            
+
             <p className="text-justify">{movie.overview}</p>
 
             <ul className="flex gap-2 mt-4 mb-4">
