@@ -22,7 +22,7 @@ const { TextArea } = Input;
 
 const { Dragger } = Upload;
 
-const CreatePublication = () => {
+const CreatePublication = ({ setPublications }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const [inputValue, setInputValue] = useState("");
@@ -106,6 +106,7 @@ const CreatePublication = () => {
       .post("/publicacoes/", data)
       .then((response) => {
         toast.success("Publicação feita com sucesso!");
+        setPublications((prevPublications) => [response.data, ...prevPublications]);
         handleCloseModal();
       })
       .catch((error) => {

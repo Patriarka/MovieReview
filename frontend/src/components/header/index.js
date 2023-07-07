@@ -20,10 +20,10 @@ const Header = ({ searchOptionAlreadyDefined="movies" }) => {
   const handleSearch = async (value) => {
     switch (searchOption) {
       case "users":
-        navigate(`/search?user=${value}`);
+        navigate(`/users/${value}`);
         break;
       case "movies":
-        navigate(`/search?movie=${value}`);
+        navigate(`/movies/${value}`);
         break;
       default:
         break;

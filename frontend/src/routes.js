@@ -9,7 +9,8 @@ import SignUp from './pages/signup';
 import Login from './pages/login';
 import Profile from './pages/profile';
 import EditProfile from './pages/edit-profile';
-import Search from './pages/search';
+import Movies from './pages/movies';
+import Users from './pages/users';
 import Home from './pages/home';
 import Movie from './pages/movie';
 import User from './pages/user';
@@ -42,8 +43,12 @@ export default function Router() {
                     element={<PrivateRoute><Home /> </PrivateRoute>}
                 />
                 <Route 
-                    path="/search" 
-                    element={<PrivateRoute><Search /></PrivateRoute>}
+                    path="/movies/:search?" 
+                    element={<PrivateRoute><Movies /></PrivateRoute>}
+                />
+                <Route 
+                    path="/users/:search?" 
+                    element={<PrivateRoute><Users /></PrivateRoute>}
                 />
                 <Route 
                     path="/login" 

@@ -81,7 +81,7 @@ const Publication = ({
   }, [movieID]);
 
   return (
-    <div className="w-full bg-white rounded-xl mt-2 pb-4 pl-2 pr-4 mb-12 shadow-lg">
+    <div className="w-full bg-white rounded-xl mt-2 pb-4 pl-2 pr-4 mb-10 shadow-lg">
       <div className="flex items-center p-4 gap-4">
         <img
           className="w-11 h-11 rounded-full object-cover"
