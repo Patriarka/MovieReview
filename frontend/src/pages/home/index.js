@@ -57,7 +57,6 @@ const Home = () => {
         </div>
 
         <div className="w-1/4 hidden sm:block">
-          {/* <Trending /> */}
         </div>
       </div>
     </div>

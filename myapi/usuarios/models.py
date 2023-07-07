@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     birth_date = models.DateField('Birth date', validators=[validate_birth_date])
     email = models.EmailField(max_length=100, unique=True)
     super_reviewer = models.BooleanField(default=False)
-    profile_image = models.URLField(blank=True)
+    profile_image = models.URLField(blank=True, default="https://i.imgur.com/piVx6dg.png")
     
     USERNAME_FIELD = 'email'
     
