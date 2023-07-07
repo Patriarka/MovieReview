@@ -12,8 +12,12 @@ import ViewPublication from "../../components/ViewPublication";
 
 import { Link, useLocation } from "react-router-dom";
 
+import { useSelector } from 'react-redux';
+
 const User = () => {
     const location = useLocation();
+
+    const idMyUser = useSelector(state => state.userId);
 
     const [windowSize, setWindowSize] = useState({
         width: window.innerWidth,
@@ -51,8 +55,6 @@ const User = () => {
     const isFirstPageRef = useRef(false);
 
     const navigate = useNavigate();
-
-    var idMyUser = localStorage.getItem('idUser');
 
     useEffect(() => {
         async function userUtility() {

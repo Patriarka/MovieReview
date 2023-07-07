@@ -12,10 +12,14 @@ import CardFollower from "../../components/CardFollower";
 
 import { MdArrowBack } from 'react-icons/md';
 
+import { useSelector } from 'react-redux';
+
 import { Link } from "react-router-dom";
 
 
 const Profile = () => {
+
+    const userId = useSelector(state => state.userId);
 
     const [publications, setPublications] = useState([]);
     const [page, setPage] = useState(1);
@@ -46,11 +50,9 @@ const Profile = () => {
 
     const navigate = useNavigate();
 
-    var idUser = localStorage.getItem('idUser');
-
     useEffect(() => {
         async function userUtility() {
-            await api.get(`/usuarios/${idUser}/`)
+            await api.get(`/usuarios/${userId}/`)
                 .then(response => { setUser(response.data) })
 
             const followersResponse = await api.get(`/usuarios/followers/`);
@@ -62,7 +64,7 @@ const Profile = () => {
         }
 
         userUtility()
-    }, [idUser])
+    }, [userId])
 
     async function goEditProfile() {
         navigate("/edit-profile")
@@ -73,7 +75,7 @@ const Profile = () => {
             isFirstPageRef.current = true;
         }
 
-        const response = await api.get(`pubusuario/${idUser}/?page=${page}`);
+        const response = await api.get(`pubusuario/${userId}/?page=${page}`);
         setPublications((prevPublications) => [
             ...prevPublications,
             ...response.data.results,
@@ -140,7 +142,7 @@ const Profile = () => {
                     <div className={'tabs-profile'}>
                         <Link
                             to={{
-                                pathname: `/followers/${idUser}`,
+                                pathname: `/followers/${userId}`,
                             }}
                             state={{
                                 prevPath: '/profile'
@@ -151,7 +153,7 @@ const Profile = () => {
                         </Link>
                         <Link
                             to={{
-                                pathname: `/following/${idUser}`,
+                                pathname: `/following/${userId}`,
                             }}
                             state={{
                                 prevPath: '/profile'
@@ -170,7 +172,7 @@ const Profile = () => {
                             <p className={'tab-profile'}>Favoritos</p>
                         </Link>
                         <Link
-                            to={`/watchlist/${idUser}/`}
+                            to={`/watchlist/${userId}/`}
                             state={{
                                 prevPath: '/profile'
                             }}
@@ -189,7 +191,7 @@ const Profile = () => {
                             critic={publication.pub_text}
                             image={publication?.imgur_link}
                             date={publication.date}
-                            myPub={(publication.user_id === parseInt(idUser)) ? true : false}
+                            myPub={(publication.user_id === parseInt(userId)) ? true : false}
                             id={publication.id}
                         />
                     )))}

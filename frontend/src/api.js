@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+import store from './store';
+import { refreshToken } from './authActions';
+
 const api = axios.create({
   baseURL: 'http://localhost:8000/',
 })
@@ -43,19 +46,10 @@ api.interceptors.request.use(
 
     if (access && refresh) {
       try {
-        await axios.post('http://localhost:8000//api/token/verify/', { token: access }, { headers });
+        await axios.post('http://localhost:8000/api/token/verify/', { token: access }, { headers });
       } catch (error) {
         if (error.response.status === 401) {
-          try {
-            const response = await axios.post('http://localhost:8000//api/token/refresh/', { refresh: refresh }, { headers });
-            const newAccess = response.data.access;
-
-            localStorage.setItem('tokenUser', JSON.stringify(newAccess));
-
-            config.headers.Authorization = `Bearer ${newAccess}`;
-          } catch (error) {
-            console.log(error);
-          }
+          await store.dispatch(refreshToken(config));
         }
       }
     }
