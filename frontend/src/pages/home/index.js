@@ -1,128 +1,67 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
-import axios from 'axios';
-import styles from './styles.css';
+import Header from "../../components/header";
+
+// import Trending from "../../components/Trending";
+
+import CreatePublication from "../../components/CreatePublication";
 
 import Publication from "../../components/Publication";
-import Header from "../../components/header";
-import HeaderDesktop from "../../components/headerDesktop";
 
 import Menu from "../../components/menu";
-import ViewPublication from "../../components/ViewPublication";
 
 import api from "../../api";
 
-import Trending from "../../components/Trending"
-import TrendingCarousel from "../../components/TrendingCarousel";
-
 const Home = () => {
-    const [publications, setPublications] = useState([]);
-    const [page, setPage] = useState(1);
-    const isFirstPageRef = useRef(false);
+  const [publications, setPublications] = useState([]);
 
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [])
-
-    const fetchFeed = async () => {
-        if (page === 1) {
-            isFirstPageRef.current = true;
-        }
-
-        const response = await api.get(`feed/?page=${page}`);
-        setPublications((prevPublications) => [
-            ...prevPublications,
-            ...response.data.results,
-        ]);
+  useEffect(() => {
+    const fetchPublications = async () => {
+      try {
+        const response = await api.get(`feed/?page=1`);
+        setPublications(response.data.results);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    useEffect(() => {
-        if (isFirstPageRef.current === false || page !== 1) {
-            fetchFeed();
-        }
-    }, [page]);
+    fetchPublications();
+  }, []);
 
-    const handleScroll = () => {
-        const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-        
-        if (scrollTop + clientHeight >= scrollHeight - 0) {
-            setPage((prevPage) => prevPage + 1);
-        }
-    };
+  return (
+    <div className="container mx-auto max-w-[1580px]">
+      <Header />
 
-    useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+      <div className="mx-auto flex">
+        <div className="w-1/4 hidden sm:block mt-10">
+          <Menu selectedOption={"1"} />
+        </div>
 
-    var idUser = localStorage.getItem('idUser');
+        <div className="w-full sm:w-1/2 p-2">
+          <CreatePublication setPublications={setPublications} />
+          {publications.length > 0 &&
+            publications.map((publication, index) => (
+              <Publication
+                key={index}
+                userID={publication.user_id}
+                idPost={publication?.id}
+                movieID={publication.movie_id}
+                rating={publication.review}
+                pubText={publication.pub_text}
+                image={publication?.imgur_link}
+                date={publication.date}
+                myPub={false}
+                id={publication.id}
+              />
+            ))}
+        </div>
 
-    console.log("aqui", publications)
-
-    return (
-        <>
-            {(window.innerWidth > 760) ?
-                <HeaderDesktop />
-                :
-
-                <Header />
-            }
-            <div className="content-home">
-                {windowSize.width < 680
-                    ?
-                    (
-                        <Menu />
-                    )
-                    :
-                    <div className="home-left-content">
-                        <Menu />
-                    </div>
-                }
-                
-                <div className="content-box-home">
-                    <Publication />
-                    <TrendingCarousel />
-                    {publications.length > 0 && (publications.map((publication, index) => (
-                        <ViewPublication
-                            key={index}
-                            userID={publication.user_id}
-                            idPost={publication?.id}
-                            idMovie={publication.movie_id}
-                            rating={publication.review}
-                            critic={publication.pub_text}
-                            image={publication?.imgur_link}
-                            date={publication.date}
-                            myPub={(publication.user_id === parseInt(idUser)) ? true : false}
-                            id={publication.id}
-                        />
-                    )))}
-                </div>
-
-                <div className="home-right-content">
-                    <Trending />
-                </div>
-            </div>
-        </>
-    )
-}
+        <div className="w-1/4 hidden sm:block">
+          {/* <Trending /> */}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Home;
-

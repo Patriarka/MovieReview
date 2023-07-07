@@ -1,5 +1,4 @@
 import React from 'react';
-import './styles.css';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pageNumbers = [];
@@ -9,14 +8,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   }
 
   return (
-    <div className="pagination-content">
+    <div className="mt-8 mb-4 ml-4 flex items-center gap-4">
       {pageNumbers.map((number) => (
         <button 
           key={number} 
           onClick={(event) => onPageChange(event, number)} 
-          className={currentPage === number ? "active" : ""}
+          className={currentPage === number ? "active text-pink-500" : ""}
         >
-          {number}
+          <p className='text-base font-bold'>{number}</p>
         </button>
       ))}
     </div>

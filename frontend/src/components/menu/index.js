@@ -1,75 +1,70 @@
-import React, { useState } from "react";
-import "./styles.css";
-import { AiFillHome } from "react-icons/ai";
-import { BsFillBookmarkStarFill } from "react-icons/bs";
-import { BiLogOut } from "react-icons/bi";
-import { CgProfile } from "react-icons/cg";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+
+import { HomeOutlined, UserOutlined, LogoutOutlined, StarOutlined, EyeOutlined } from "@ant-design/icons";
+
+import { StyledMenuItem, StyledMenu } from '../../styles/pages/HomeStyles';
 
 import { useDispatch } from "react-redux";
+
+import { Layout } from "antd";
+
+import { Link, useNavigate } from "react-router-dom";
+
 import { logout } from "../../authActions.js";
 
-import api from "../../api";
+const { Sider } = Layout;
 
-const Menu = () => {
+const Menu = ({ selectedOption }) => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-
-  async function goHome() {
-    navigate("/");
-  }
-
-  async function goProfile() {
-    navigate("/profile");
-  }
 
   const handleLogout = async () => {
     let refresh = localStorage.getItem("refreshTokenUser");
-
+  
     refresh = refresh.substring(1, refresh.length - 1);
-
+  
     const body = {
       refresh: refresh,
     };
-
+  
     try {
-    //   api.post("/logout/", body);
       await dispatch(logout(body));
+        localStorage.setItem("tokenUser", "");
+        localStorage.setItem("refreshTokenUser", "");
+        navigate("/login");
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      localStorage.setItem("tokenUser", "");
-      localStorage.setItem("refreshTokenUser", "");
-      navigate("/login");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return (
-    <>
-      <div className="content-menu"></div>
-      <div className="menu-contrast">
-        <div className="menu-contrast">
-          <div className="inside-menu" onClick={goHome}>
-            <AiFillHome className="icon" />
-            <p>Home</p>
-          </div>
-          <div className="inside-menu" onClick={goProfile}>
-            <CgProfile className="icon" />
-            <p>Perfil</p>
-          </div>
-          <div
-            style={{ color: "#e90074" }}
-            className="inside-menu"
-            onClick={handleLogout}
+    return(
+        <Layout
+            style={{ minHeight: "100vh", backgroundColor: "transparent" }}
           >
-            <BiLogOut className="icon" />
-            <p>Sair</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+            <Sider width={"90%"} style={{ backgroundColor: "transparent" }}>
+              <StyledMenu
+                mode="inline"
+                defaultSelectedKeys={selectedOption}
+              >
+                <StyledMenuItem key="1" icon={<HomeOutlined />}>
+                  <Link to="/">Início</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="2" icon={<UserOutlined />}>
+                  <Link to="/profile">Perfil</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="3" icon={<EyeOutlined />}>
+                  <Link to="/watchlist">Watchlist</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="4" icon={<StarOutlined />}>
+                  <Link to="/favoritos">Favoritos</Link>
+                </StyledMenuItem>
+                <StyledMenuItem key="5" icon={<LogoutOutlined />} onClick={handleLogout}>
+                  <Link to="">Sair</Link>
+                </StyledMenuItem>
+              </StyledMenu>
+            </Sider>
+          </Layout>
+    )
+}
 
 export default Menu;

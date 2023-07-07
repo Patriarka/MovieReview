@@ -45,7 +45,7 @@ const Login = () => {
   };
 
   return (
-    <div className="container max-w-[1580px] mx-auto max-w-1480 h-screen flex">
+    <div className="container max-w-[1580px] mx-auto h-screen flex">
       <div className="w-1/2 hidden sm:block">
         <img
           src="https://www.themoviedb.org/t/p/original/4HodYYKEIsGOdinkGi2Ucz6X9i0.jpg"

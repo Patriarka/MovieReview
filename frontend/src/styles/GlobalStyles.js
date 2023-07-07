@@ -1,4 +1,6 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, styled } from "styled-components";
+
+import { Menu } from 'antd';
 
 export const GlobalStyles = createGlobalStyle`
   body {

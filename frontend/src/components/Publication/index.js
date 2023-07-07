@@ -1,325 +1,137 @@
 import React, { useState, useEffect } from "react";
-import './styles.css';
-import { AiFillPlusCircle } from 'react-icons/ai';
-import { FaSpinner } from 'react-icons/fa';
+import "./styles.css";
+
+import userImage from "../../assets/user-default.png";
+
+import { LikeOutlined, DislikeOutlined, CommentOutlined } from "@ant-design/icons";
+
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
-import api from '../../api';
 
-import ImageUpload from "../ImageUpload";
-import { FaCheck } from 'react-icons/fa';
+import api from "../../api";
 
-import StarRating from "../StarRating";
+const Publication = ({
+  userID,
+  postID,
+  movieID,
+  rating,
+  pubText,
+  image,
+  pubDate,
+  isMyPub,
+}) => {
+  const [userPublicationOwner, setUserPublicationOwner] = useState(null);
+  const [moviePublication, setMoviePublication] = useState(null);
+  const [showPoster, setShowPoster] = useState(false);
 
-import { debounce } from 'lodash';
-import userImage from '../../assets/user-default.png';
+  const navigate = useNavigate();
 
+  const showPosterHandler = () => {
+    setShowPoster(true);
+  };
 
-const Publication = () => {
+  const hidePosterHandler = () => {
+    setShowPoster(false);
+  };
 
-    const [movies, setMovies] = useState([]);
-    const [selectedMovie, setSelectedMovie] = useState('');
-    const [postText, setPostText] = useState('');
-    const [selectedReview, setSelectedReview] = useState('');
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [minLoadingTimePassed, setMinLoadingTimePassed] = useState(true);
-    const [showConfirmation, setShowConfirmation] = useState(false);
-    const [showMovieOptions, setShowMovieOptions] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
-    const [user, setUser] = useState(null);
-
-    function handleReviewChange(rating) {
-        setSelectedReview(rating);
+  const posterMouseEnterHandler = () => {
+    if (!showPoster) {
+      setShowPoster(true);
     }
+  };
 
-    useEffect(() => {
-        let id = localStorage.getItem("idUser");
-        id = id.substring(1, id.length - 1);
+  const posterMouseLeaveHandler = () => {
+    if (showPoster) {
+      setShowPoster(false);
+    }
+  };
 
-        async function userUtility() {
-            await api.get(`/usuarios/${id}/`)
-                .then(response => { setUser(response.data) })
-        }
+  const handleProfile = () => {
+    const url = `/user/${userID}`;
+    navigate(url);
+  };
 
-        userUtility()
-    }, [])
+  const handleMovie = () => {
+    const url = `/movie/${movieID}`;
+    navigate(url);
+  };
 
-    const debouncedSearch = debounce(async (query) => {
-        try {
-            const url = 'https://api.themoviedb.org/3/search/movie'
-
-            const response = await axios.get(url, {
-                params: {
-                    api_key: process.env.REACT_APP_TMDB_API_KEY,
-                    query,
-                    language: 'pt-BR',
-                },
-            });
-
-            setMovies(response.data.results);
-
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsSearching(false);
-        }
-    }, 3000);
-
-    const handleSearchChange = (event) => {
-        setIsSearching(true);
-        debouncedSearch(event.target.value)
-        setShowMovieOptions(true);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`usuarios/${userID}/`);
+        setUserPublicationOwner(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    const handleMovieSelect = (event) => {
-        document.getElementById("align-post-review").style.display = "block"
-        document.getElementById("button-handleSubmit").style.display = "block"
-        document.getElementById("review").style.display = "block"
+    fetchUserData();
+  }, [userID]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = `https://api.themoviedb.org/3/movie/${movieID}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=pt-BR`;
+      const response = await axios.get(url);
+      setMoviePublication(response.data);
     };
 
-    async function addMovie() {
-        document.getElementById("publication-movie-content").style.display = "flex"
-        document.getElementById("publication-movie-content").style.flexDirection = "column"
-        document.getElementById("publication-movie-content").style.alignItems = "center"
-        document.getElementById("button-add-movie").style.display = "none"
-    }
+    fetchData();
+  }, [movieID]);
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+  return (
+    <div className="w-full bg-white rounded-xl mt-2 pb-4 pl-2 pr-4 mb-10 shadow-lg">
+      <div className="flex items-center p-4 gap-4">
+        <img
+          className="w-11 h-11 rounded-full object-cover"
+          src={
+            userPublicationOwner?.profile_image
+              ? userPublicationOwner?.profile_image
+              : userImage
+          }
+          alt="user"
+        />
+        <div>
+          <h1
+            className="cursor-pointer hover:text-gray-500"
+            onClick={handleProfile}
+          >
+            {userPublicationOwner?.nickname}
+          </h1>
+          <h1 className="text-gray-400 text-sm">
+            Crítica de
+            <span
+              className="cursor-pointer hover:text-gray-500 ml-1 transition duration-300"
+              onMouseEnter={showPosterHandler}
+              onMouseLeave={hidePosterHandler}
+              onClick={handleMovie}
+            >
+              {moviePublication?.title}
+            </span>
+          </h1>
+        </div>
+      </div>
+      <div className="ml-5 pr-8 w-full max-h-40 overflow-y-auto">
+        <p className="overflow-wrap break-word text-justify">{pubText}</p>
+      </div>
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+      {/* Colocar uma imagem caso tenha */}
+      
 
-        let errorMsg = '';
-
-        if ((document.getElementById("review-text").value).length < 10) {
-            errorMsg += "A crítica precisa ter mais de 10 caracteres. ";
-        }
-
-        if (selectedMovie === '') {
-            errorMsg += "O filme precisa ser selecionado. ";
-        }
-
-        if (selectedReview === '') {
-            errorMsg += "A nota precisa ser selecionada. ";
-        }
-
-        if (errorMsg !== '') {
-            alert(errorMsg);
-            return;
-        }
-
-        let id = localStorage.getItem("idUser");
-        id = id.substring(1, id.length - 1);
-        let token = localStorage.getItem("tokenUser");
-        token = token.substring(1, token.length - 1);
-
-        const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleDateString();
-
-        const data = {
-            "review": selectedReview,
-            "pub_text": postText,
-            "user_id": parseInt(id),
-            "date": formattedDate,
-            "movie_id": selectedMovie.id,
-            "movie_title": selectedMovie.original_title,
-        };
-
-        const formData = new FormData();
-
-        setIsLoading(true);
-
-        formData.append('image', selectedFile);
-        formData.append('review', data.review);
-        formData.append('pub_text', data.pub_text);
-        formData.append('user_id', data.user_id);
-        formData.append('date', data.date);
-        formData.append('movie_id', data.movie_id);
-        formData.append('movie_title', data.movie_title);
-
-        try {
-            const response = await api.post('/publicacoes/', formData);
-            console.log(response.data);
-
-            setMinLoadingTimePassed(false);
-
-            await delay(2000);
-
-            setMinLoadingTimePassed(true);
-
-            setIsLoading(false);
-            setShowConfirmation(true);
-
-            await delay(2000);
-
-            setShowConfirmation(false);
-        } catch (error) {
-            console.log(error);
-        }
-        window.location.reload();
-    };
-
-    async function seeBest() {
-        document.getElementById("button-cancel").style.display = "block"
-    }
-
-    async function cancelPost() {
-        setSelectedFile(null);
-        setSelectedMovie('')
-        setSelectedReview('')
-        setMovies([])
-
-        document.getElementById("review-text").style.height = "20px"
-        document.getElementById("review-text").value = ""
-
-        document.getElementById("button-cancel").style.display = "none"
-        document.getElementById("publication-movie-content").style.display = "none"
-        document.getElementById("align-post-review").style.display = "none"
-        document.getElementById("button-handleSubmit").style.display = "none"
-        document.getElementById("review").style.display = "none"
-        document.getElementsByClassName("input-search-movie").value = ""
-        document.getElementById("button-add-movie").style.display = "block"
-    }
-
-    function addMovieAndSeeBest() {
-        addMovie();
-        seeBest();
-    }
-
-    function handle(event, movie) {
-        setSelectedMovie(movie);
-
-        handleMovieSelect(event)
-
-        setShowMovieOptions(false);
-    }
-
-    return (
-        <>
-            <div className="publication-content">
-
-                {(isLoading || !minLoadingTimePassed) ? (
-                    <div className="loading-overlay">
-                        <div className="loading-indicator"></div>
-                    </div>
-                ) : showConfirmation ? (
-                    <div className="confirmation-overlay">
-                        <div className="confirmation-icon">
-                            <FaCheck size={32} color="green" />
-                        </div>
-                    </div>
-                ) : null}
-
-                <div className="publication-text-content">
-                    <div className="content-conf-review-write">
-                        {user && (<img
-                            className="user-image"
-                            src={user.profile_image ? user.profile_image : userImage}
-                            alt="user-photo"
-                            style={{ objectFit: "cover" }}
-                        />)}
-                        <button onClick={cancelPost} id="button-cancel" className="button-cancel">Cancelar</button>
-                    </div>
-                    <textarea
-                        value={postText}
-                        onChange={(e) => setPostText(e.target.value)}
-                        placeholder="Escrever uma Crítica"
-                        id="review-text"
-                        maxLength={400}
-                    />
-                </div>
-
-                <button
-                    onClick={addMovieAndSeeBest}
-                    id="button-add-movie"
-                    className="button-add-movie"
-                >
-                    <AiFillPlusCircle className="plus-icon" />
-                    Adicionar Crítica
-                </button>
-                <br />
-
-                <div className="content-post-review">
-                    <div id="publication-movie-content" className="publication-movie-content">
-
-                        <div style={{ width: "100%", height: "100%", position: "relative", display: "flex", justifyContent: "center" }}>
-                            <input
-                                type="text"
-                                placeholder="Selecione o filme"
-                                onChange={handleSearchChange}
-                                className={Object.keys(selectedMovie).length === 0 ? "input-search-movie" : "input-search-movie input-search-movie-selected"}
-                                list="movie-options"
-                            />
-                            {isSearching && <FaSpinner className="loading-icon" />}
-                        </div>
-                        {showMovieOptions && (
-                            <div className="movie-options-wrapper">
-                                <div className="movie-options">
-                                    {movies.map((movie) => (
-                                        <div
-                                            key={movie.id}
-                                            className="movie-option"
-                                            onClick={(event) => handle(event, movie)}
-                                        >
-                                            {movie.title}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {selectedMovie ? (
-                            <div style={{ width: "100%" }} className="adding-movie">
-                                <div className="selected-movie">
-                                    <img
-                                        width={80}
-                                        height={120}
-                                        className="movie-poster"
-                                        src={`https://image.tmdb.org/t/p/w185${selectedMovie?.poster_path}`}
-                                        alt={`Cartaz do filme ${selectedMovie?.title}`}
-                                    />
-
-                                    <div className="info-movie-holt">
-                                        <p id="name-movie">{selectedMovie?.title}</p>
-                                        <p>Lançado em {selectedMovie?.release_date.substring(0, 4)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : true}
-                    </div>
-                </div>
-
-                <div
-                    id="align-post-review"
-                    className="align-post-review"
-                >
-                    <ImageUpload
-                        selectedFile={selectedFile}
-                        setSelectedFile={setSelectedFile}
-                    />
-
-                    <div className="post-review-conf">
-                        <StarRating
-                            selectedRating={selectedReview}
-                            onChange={handleReviewChange}
-                        />
-                        <button
-                            style={{ maxWidth: "140px" }}
-                            id="button-handleSubmit"
-                            type="button"
-                            onClick={handleSubmit}
-                        >
-                            Publicar Crítica
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </>
-    )
-}
+      {/* <div className="flex items-center justify-center gap-8">
+        <div className="hover:text-gray-500 flex items-center justify-between gap-2 cursor-pointer">
+          <LikeOutlined /> Curtir
+        </div>
+        <div className="flex items-center justify-between gap-2 cursor-pointer">
+          <DislikeOutlined /> Descurtir
+        </div>
+        <div className="flex items-center justify-between gap-2 cursor-pointer">
+          <CommentOutlined /> Comentar
+        </div>
+      </div> */}
+    </div>
+  );
+};
 
 export default Publication;
