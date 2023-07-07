@@ -35,7 +35,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserPublicationsData = async () => {
-      const response = await api.get(`pubusuario/${userId}/?page=${page}`);
+      const response = await api.get(`/pubusuario/${userId}/?page=${page}`);
       setPublications(response.data.results);
     };
 
@@ -54,7 +54,7 @@ const Profile = () => {
         <div className="w-full sm:w-1/2 p-2">
           <div className="flex gap-2 mt-8">
             <img
-              className="w-40 h-50 rounded-xl"
+              className="w-40 h-50 rounded-full"
               src={user?.profile_image}
               alt={user?.id}
             />
@@ -63,10 +63,10 @@ const Profile = () => {
 
               <div className="text-base flex gap-2 text-gray-600">
                 <Link>
-                  <h2 className="hover:text-black">10 Seguidores</h2>
+                  <h2 className="hover:text-black">Seguidores</h2>
                 </Link>
                 <Link>
-                  <h2 className="hover:text-black">10 Seguindo</h2>
+                  <h2 className="hover:text-black">Seguindo</h2>
                 </Link>
               </div>
             </div>
