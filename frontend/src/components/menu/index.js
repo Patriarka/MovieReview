@@ -4,13 +4,38 @@ import { HomeOutlined, UserOutlined, LogoutOutlined, StarOutlined, EyeOutlined }
 
 import { StyledMenuItem, StyledMenu } from '../../styles/pages/HomeStyles';
 
+import { useDispatch } from "react-redux";
+
 import { Layout } from "antd";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { logout } from "../../authActions.js";
 
 const { Sider } = Layout;
 
 const Menu = ({ selectedOption }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    let refresh = localStorage.getItem("refreshTokenUser");
+  
+    refresh = refresh.substring(1, refresh.length - 1);
+  
+    const body = {
+      refresh: refresh,
+    };
+  
+    try {
+      await dispatch(logout(body));
+        localStorage.setItem("tokenUser", "");
+        localStorage.setItem("refreshTokenUser", "");
+        navigate("/login");
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     return(
         <Layout
@@ -33,7 +58,7 @@ const Menu = ({ selectedOption }) => {
                 <StyledMenuItem key="4" icon={<StarOutlined />}>
                   <Link to="/favoritos">Favoritos</Link>
                 </StyledMenuItem>
-                <StyledMenuItem key="5" icon={<LogoutOutlined />}>
+                <StyledMenuItem key="5" icon={<LogoutOutlined />} onClick={handleLogout}>
                   <Link to="">Sair</Link>
                 </StyledMenuItem>
               </StyledMenu>
