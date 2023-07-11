@@ -12,11 +12,15 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { logout } from "../../authActions.js";
 
+import { useSelector } from "react-redux";
+
 const { Sider } = Layout;
 
 const Menu = ({ selectedOption }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userId = useSelector((state) => state.userId);
 
   const handleLogout = async () => {
     let refresh = localStorage.getItem("refreshTokenUser");
@@ -53,7 +57,7 @@ const Menu = ({ selectedOption }) => {
                   <Link to="/profile">Perfil</Link>
                 </StyledMenuItem>
                 <StyledMenuItem key="3" icon={<EyeOutlined />}>
-                  <Link to="/watchlist">Watchlist</Link>
+                  <Link to={`/watchlist/${userId}`}>Watchlist</Link>
                 </StyledMenuItem>
                 <StyledMenuItem key="4" icon={<StarOutlined />}>
                   <Link to="/favoritos">Favoritos</Link>

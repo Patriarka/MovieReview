@@ -1,194 +1,106 @@
-import React, { useEffect, useState, useRef } from "react";
-import Header from '../../components/header';
-import HeaderDesktop from "../../components/headerDesktop";
-import Menu from '../../components/menu';
+import React, { useEffect, useState } from "react";
 
-import styles from './styles.css';
+import Header from "../../components/header";
+
+import Menu from "../../components/menu";
 
 import api from "../../api";
 
-import { Link, useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { FaTimes, FaStar } from 'react-icons/fa';
-import { MdArrowBack } from "react-icons/md";
-import { AiFillEye } from 'react-icons/ai';
+import posternotfound from "../../assets/posternotfound.png";
+
+import { Tooltip } from "react-tooltip";
+
+import { Link } from "react-router-dom";
+
+import { AiFillEye } from "react-icons/ai";
+
+import Pagination from "../../components/pagination";
 
 const Watchlist = () => {
-    const { id } = useParams();
+  const { id } = useParams();
 
-    const location = useLocation()
+  const [watchlist, setWatchlist] = useState([]);
+  const [watchlistTotalCount, setWatchlistTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
-    var [Watchlist, setWatchlist] = useState([]);
-    var [page, setPage] = useState(1);
-    const isFirstPageRef = useRef(false);
+  useEffect(() => {
+    const fetchWatchlistData = async () => {
+      const response = await api.get(`/watchlist/user/${id}/?page=${currentPage}`);
 
-    const backButtonRoute = location.state?.prevPath;
+      const watchlistMovies = response.data.results.map((movie) => ({
+        ...movie,
+        watchlist: movie.watchlist,
+      }));
 
-    const getMovies = async () => {
-        if (page === 1) {
-            isFirstPageRef.current = true;
-        }
+      setWatchlistTotalCount(response.data.count);
 
-        const response = await api.get(`/watchlist/user/${id}/?page=${page}`);
-
-        console.log(response.data.results)
-
-        const watchlistMovies = response.data.results.map(movie => ({
-            ...movie,
-            watchlist: movie.watchlist
-        }));
-
-        setWatchlist((prevPublications) => [
-            ...prevPublications,
-            ...watchlistMovies,
-        ]);
+      setWatchlist(watchlistMovies);
     };
 
-    const handleScroll = () => {
-        const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+    fetchWatchlistData();
+  }, [id, currentPage]);
 
-        if (scrollTop + clientHeight >= scrollHeight) {
-            setPage((prevPage) => prevPage + 1);
-        }
-    };
+  function handlePageChange(event, pageNumber) {
+    event.preventDefault();
+    setCurrentPage(pageNumber);
+  }
 
-    useEffect(() => {
-        if (isFirstPageRef.current === false || page !== 1) {
-            getMovies();
-        }
-    }, [page]);
+  return (
+    <div className="container mx-auto max-w-[1580px]">
+      <Header />
 
-    useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+      <div className="mx-auto flex">
+        <div className="w-1/4 hidden sm:block mt-10">
+          <Menu selectedOption={"3"} />
+        </div>
 
-    async function toggleRemoveToWatchlist(movieId) {
-        try {
-            const index = Watchlist.findIndex(movie => movie.movie_id === movieId);
-
-            if (index !== -1) {
-                setWatchlist(prevList => {
-                    const updatedList = [...prevList];
-                    updatedList[index].watchlist = false;
-                    return updatedList;
-                });
-
-                await api.delete(`watchlist/movie/${movieId}/`);
-            }
-        } catch (error) {
-            console.log('Ocorreu um erro ao remover na watchlist:', error);
-        }
-    }
-
-    async function toggleAddToWatchlist(movie) {
-        let id = movie.movie_id
-
-        const data = {
-            "user_id": localStorage.getItem('idUser'),
-            "movie_id": movie.movie_id,
-            "poster_img": `https://image.tmdb.org/t/p/w500/${movie.poster_img}`,
-            "movie_title": movie.movie_title
-        }
-
-        let loginItem;
-
-        if (localStorage.getItem('tokenUser')) {
-            loginItem = localStorage.getItem('tokenUser').substring(1, localStorage.getItem('tokenUser').length - 1);
-        }
-
-        try {
-            const index = Watchlist.findIndex(movie => movie.movie_id === id);
-
-            await api.post('/watchlist/', data)
-
-            if (index !== -1) {
-                setWatchlist(prevList => {
-                    const updatedList = [...prevList];
-                    updatedList[index].watchlist = true;
-                    return updatedList;
-                });
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    console.log(Watchlist.length)
-
-    return (
-        <>
-            {(window.innerWidth > 760) ?
-                <HeaderDesktop />
-                :
-
-                <Header />
-            }
-            <div className="content-page">
-                <div className="left-content">
-                    <Menu />
-                </div>
-                <div className="center-content">
-                    <div className="title-content">
-                        <Link
-                            className="back-btn"
-                            to={backButtonRoute}
-                            style={{ textDecoration: "none", color: "#fff" }}
-                        >
-                            <MdArrowBack size={32} className="back-icon" />
-                        </Link>
-                        <h1 className="title-component">Assistir no futuro</h1>
-                    </div>
-                    <div className="favorite-content">
-                        {Watchlist.map((movie, index) =>
-                        (
-                            <div key={index} className="favoriteMovie-component">
-                                <img className="moviePicture" src={movie.poster_img} />
-                                <div className="infoFavorite-movie">
-                                    <div className="movieInfo">
-                                        <Link
-                                            className="movie-favorite-item"
-                                            to={`/movie/${movie.movie_id}`}
-                                            style={{ textDecoration: "none", color: "#fff" }}
-                                        >
-                                            <p className="movieTitle">{movie.movie_title}</p>
-                                        </Link>
-                                    </div>
-
-                                    <div className="button-content">
-                                        {movie.watchlist ? (
-
-                                            <button
-                                                className="watchlistButton"
-                                                onClick={() => toggleRemoveToWatchlist(movie.movie_id)}
-                                            >
-                                                <span className="closeIcon">
-                                                    <AiFillEye className="pink-eye" size={18} />
-                                                </span>
-                                            </button>
-                                        ) : (
-
-                                            <button
-                                                className="watchlistButton"
-                                                onClick={() => toggleAddToWatchlist(movie)}
-                                            >
-                                                <span className="closeIcon">
-                                                    <AiFillEye color="#fff" size={18} />
-                                                </span>
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-
-                    </div>
-                </div>
+        <div className="w-full sm:w-1/2 p-2">
+          <div className="mt-8">
+            <h2 className="text-lg font-bold mt-4 mb-4">Assistir no Futuro</h2>
+            <div className="w-full grid grid-cols-7 gap-x-1 gap-y-6">
+              {watchlist.length > 0 &&
+                watchlist.map((movie) => (
+                  <Link
+                    className="relative"
+                    to={`/movie/${movie?.movie_id}`}
+                    key={movie?.id}
+                  >
+                    <img
+                      className="rounded-xl hover:border-[#cb498a] border-4 cursor-pointer"
+                      alt={movie?.id}
+                      src={
+                        movie?.poster_img
+                          ? `https://image.tmdb.org/t/p/w500/${movie.poster_img}`
+                          : posternotfound
+                      }
+                      data-tooltip-id={`tooltip-${movie?.movie_id}`}
+                      data-tooltip-content={movie?.movie_title}
+                    />
+                    <Tooltip
+                      className="bg-gray-500 z-20"
+                      id={`tooltip-${movie?.movie_id}`}
+                    />
+                  </Link>
+                ))}
             </div>
-        </>
-    )
-}
+            {watchlist.length > 0 && (
+                <Pagination
+                  totalPages={Math.ceil(watchlistTotalCount / 30)}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                />
+              )}
+          </div>
+        </div>
+
+        <div className="w-1/4 hidden sm:block"></div>
+      </div>
+    </div>
+  );
+};
 
 export default Watchlist;
+
+// falta incluir paginação e botão da watchlist
