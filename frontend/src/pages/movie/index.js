@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 
 import Header from "../../components/header";
 import Menu from "../../components/menu";
+import MovieEvaluation from "../../components/MovieEvaluation";
 
 import { useParams } from "react-router-dom";
 
@@ -116,7 +117,9 @@ const Movie = () => {
           </div>
         </div>
 
-        <div className="w-1/2 hidden sm:block"></div>
+        <div className="w-1/2 hidden sm:block">
+          <MovieEvaluation movie={movie} />
+        </div>
       </div>
     </div>
   );
