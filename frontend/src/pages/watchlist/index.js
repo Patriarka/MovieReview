@@ -14,26 +14,38 @@ import { Tooltip } from "react-tooltip";
 
 import { Link } from "react-router-dom";
 
+import { AiFillEye } from "react-icons/ai";
+
+import Pagination from "../../components/pagination";
+
 const Watchlist = () => {
   const { id } = useParams();
 
   const [watchlist, setWatchlist] = useState([]);
-  const [page, setPage] = useState(1);
+  const [watchlistTotalCount, setWatchlistTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchWatchlistData = async () => {
-      const response = await api.get(`/watchlist/user/${id}/?page=1`);
+      const response = await api.get(`/watchlist/user/${id}/?page=${currentPage}`);
 
       const watchlistMovies = response.data.results.map((movie) => ({
         ...movie,
         watchlist: movie.watchlist,
       }));
 
+      setWatchlistTotalCount(response.data.count);
+
       setWatchlist(watchlistMovies);
     };
 
     fetchWatchlistData();
-  }, [id]);
+  }, [id, currentPage]);
+
+  function handlePageChange(event, pageNumber) {
+    event.preventDefault();
+    setCurrentPage(pageNumber);
+  }
 
   return (
     <div className="container mx-auto max-w-[1580px]">
@@ -47,10 +59,14 @@ const Watchlist = () => {
         <div className="w-full sm:w-1/2 p-2">
           <div className="mt-8">
             <h2 className="text-lg font-bold mt-4 mb-4">Assistir no Futuro</h2>
-            <div className="w-full grid grid-cols-6 gap-x-1 gap-y-6">
+            <div className="w-full grid grid-cols-7 gap-x-1 gap-y-6">
               {watchlist.length > 0 &&
                 watchlist.map((movie) => (
-                  <Link to={`/movie/${movie?.movie_id}`} key={movie?.id}>
+                  <Link
+                    className="relative"
+                    to={`/movie/${movie?.movie_id}`}
+                    key={movie?.id}
+                  >
                     <img
                       className="rounded-xl hover:border-[#cb498a] border-4 cursor-pointer"
                       alt={movie?.id}
@@ -62,10 +78,20 @@ const Watchlist = () => {
                       data-tooltip-id={`tooltip-${movie?.movie_id}`}
                       data-tooltip-content={movie?.movie_title}
                     />
-                    <Tooltip className="bg-gray-500" id={`tooltip-${movie?.movie_id}`} />
+                    <Tooltip
+                      className="bg-gray-500 z-20"
+                      id={`tooltip-${movie?.movie_id}`}
+                    />
                   </Link>
                 ))}
             </div>
+            {watchlist.length > 0 && (
+                <Pagination
+                  totalPages={Math.ceil(watchlistTotalCount / 30)}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                />
+              )}
           </div>
         </div>
 
@@ -76,3 +102,5 @@ const Watchlist = () => {
 };
 
 export default Watchlist;
+
+// falta incluir paginação e botão da watchlist
