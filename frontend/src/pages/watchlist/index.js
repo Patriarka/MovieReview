@@ -6,13 +6,11 @@ import Menu from "../../components/menu";
 
 import api from "../../api";
 
-import { useParams } from "react-router-dom";
-
 import posternotfound from "../../assets/posternotfound.png";
 
 import { Tooltip } from "react-tooltip";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { AiFillEye } from "react-icons/ai";
 
@@ -87,7 +85,7 @@ const Watchlist = () => {
             </div>
             {watchlist.length > 0 && (
                 <Pagination
-                  totalPages={Math.ceil(watchlistTotalCount / 30)}
+                  totalPages={Math.ceil(watchlistTotalCount / 35)}
                   currentPage={currentPage}
                   onPageChange={handlePageChange}
                 />
@@ -102,5 +100,3 @@ const Watchlist = () => {
 };
 
 export default Watchlist;
-
-// falta incluir paginação e botão da watchlist

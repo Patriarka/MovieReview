@@ -75,13 +75,13 @@ export default function Router() {
                     element={<PrivateRoute> <User/> </PrivateRoute>}
                 />
                 <Route 
-                    path="/favoritos" 
+                    path="/favoritos/:id" 
                     element={<PrivateRoute> <Favoritos /> </PrivateRoute>}
                 />
-                <Route 
+                {/* <Route 
                     path="/favoritos/:id" 
                     element={<PrivateRoute> <FavoritosUsers /> </PrivateRoute>}
-                />
+                /> */}
                 <Route 
                     path="/followers/:id" 
                     element={<PrivateRoute> <Followers /> </PrivateRoute>}

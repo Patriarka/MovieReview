@@ -60,7 +60,7 @@ const Menu = ({ selectedOption }) => {
                   <Link to={`/watchlist/${userId}`}>Watchlist</Link>
                 </StyledMenuItem>
                 <StyledMenuItem key="4" icon={<StarOutlined />}>
-                  <Link to="/favoritos">Favoritos</Link>
+                  <Link to={`/favoritos/${userId}`}>Favoritos</Link>
                 </StyledMenuItem>
                 <StyledMenuItem key="5" icon={<LogoutOutlined />} onClick={handleLogout}>
                   <Link to="">Sair</Link>

@@ -1,160 +1,99 @@
 import React, { useEffect, useState } from "react";
-import Header from '../../components/header';
-import HeaderDesktop from "../../components/headerDesktop";
-import Menu from '../../components/menu';
 
-import styles from './styles.css';
+import Header from "../../components/header";
+import Menu from "../../components/menu";
+import Pagination from "../../components/pagination";
+
+import { Tooltip } from "react-tooltip";
+
+import { Link, useParams } from "react-router-dom";
 
 import api from "../../api";
 
-import { Link } from "react-router-dom";
-import { MdArrowBack } from "react-icons/md";
-import { FaTimes, FaStar } from 'react-icons/fa';
+import posternotfound from "../../assets/posternotfound.png";
 
 const Favoritos = () => {
-  var [favoriteList, setFavoriteList] = useState([]);
+  const { id } = useParams();
+
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesTotalCount, setFavoritesTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    async function getMovies() {
-      const response = await api.get('/favoritos/')
+    const fetchWatchlistData = async () => {
+      const response = await api.get(`/movies/favoritos/${id}/?page=${currentPage}`);
 
-
-      const favoriteMovies = response.data.map(movie => ({
+      const favoriteMovies = response.data.results.map((movie) => ({
         ...movie,
-        favorito: true
       }));
+      
+      // favorito: movie.favorito,
 
-      await setFavoriteList(favoriteMovies);
-    }
-    getMovies()
-  }, [])
+      setFavoritesTotalCount(response.data.count);
 
-  async function clickDesfavoritar(movieId) {
-    try {
-      const index = favoriteList.findIndex(movie => movie.movie_id === movieId);
-
-      if (index !== -1) {
-        setFavoriteList(prevList => {
-          const updatedList = [...prevList];
-          updatedList[index].favorito = false;
-          return updatedList;
-        });
-
-        await api.delete(`/favoritos/${movieId}/`);
-      }
-    } catch (error) {
-      console.log('Ocorreu um erro ao remover o favorito:', error);
-    }
-
-  }
-
-  async function clickFavoritar(movie) {
-    let id = movie.movie_id
-    const data = {
-      "user_id": localStorage.getItem('idUser'),
-      "movie_id": movie.movie_id,
-      "poster_img": `https://image.tmdb.org/t/p/w500/${movie.poster_img}`,
-      "movie_title": movie.movie_title
-    }
-
-    let loginItem;
-
-    if (localStorage.getItem('tokenUser')) {
-      loginItem = localStorage.getItem('tokenUser').substring(1, localStorage.getItem('tokenUser').length - 1);
-    }
-
-    const headers = {
-      Authorization: `Bearer ${loginItem}`,
-      "Content-type": "application/json"
+      setFavorites(favoriteMovies);
     };
 
-    try {
-      const index = favoriteList.findIndex(movie => movie.movie_id === id);
+    fetchWatchlistData();
+  }, [id, currentPage]);
 
-      await api.post('/favoritos/', data, { headers })
-
-      if (index !== -1) {
-        setFavoriteList(prevList => {
-          const updatedList = [...prevList];
-          updatedList[index].favorito = true;
-          return updatedList;
-        });
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  function handlePageChange(event, pageNumber) {
+    event.preventDefault();
+    setCurrentPage(pageNumber);
   }
 
   return (
-    <>
-      {(window.innerWidth > 760) ?
-        <HeaderDesktop />
-        :
+    <div className="container mx-auto max-w-[1580px]">
+      <Header />
 
-        <Header />
-      }
-      <div className="content-page">
-        <div className="left-content">
-          <Menu />
+      <div className="mx-auto flex">
+        <div className="w-1/4 hidden sm:block mt-10">
+          <Menu selectedOption={"4"} />
         </div>
-        <div className="center-content">
-          <div className="title-content">
-              <Link
-                className="back-btn"
-                to={'/profile/'}
-                style={{ textDecoration: "none", color: "#fff" }}
-              >
-                <MdArrowBack size={32} className="back-icon" />
-              </Link>
-              <h1 className="title-component">Filmes Favoritos</h1>
-          </div>
-          <div className="favorite-content">
-            {favoriteList.map((movie, index) =>
-            (
-              <div key={index} className="favoriteMovie-component">
-                <img className="moviePicture" src={movie.poster_img} />
-                <div className="infoFavorite-movie">
-                  <div className="movieInfo">
-                    <Link
-                      className="movie-favorite-item"
-                      to={`/movie/${movie.movie_id}`}
-                      style={{ textDecoration: "none", color: "#fff" }}
-                    >
-                      <p className="movieTitle">{movie.movie_title}</p>
-                    </Link>
-                  </div>
-                  <div className="button-content">
-                    {movie.favorito ? (
 
-                      <button
-                        className="watchlistButton favoriteStarButton"
-                        onClick={() => clickDesfavoritar(movie.movie_id)}
-                      >
-                        <span className="starIcon">
-                          <FaStar size={16} color="#eecf08" />
-                        </span>
-                      </button>
-                    ) : (
-
-                      <button
-                        className="watchlistButton favoriteStarButton"
-                        onClick={() => clickFavoritar(movie)}
-                      >
-                        <span className="starIcon">
-                          <FaStar size={16} color="#fff" />
-                        </span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-
+        <div className="w-full sm:w-1/2 p-2">
+          <div className="mt-8">
+            <h2 className="text-lg font-bold mt-4 mb-4">Favoritos</h2>
+            <div className="w-full grid grid-cols-7 gap-x-1 gap-y-6">
+              {favorites.length > 0 &&
+                favorites.map((movie) => (
+                  <Link
+                    className="relative"
+                    to={`/movie/${movie?.movie_id}`}
+                    key={movie?.id}
+                  >
+                    <img
+                      className="rounded-xl hover:border-[#cb498a] border-4 cursor-pointer"
+                      alt={movie?.id}
+                      src={
+                        movie?.poster_img
+                          ? `https://image.tmdb.org/t/p/w500/${movie.poster_img}`
+                          : posternotfound
+                      }
+                      data-tooltip-id={`tooltip-${movie?.movie_id}`}
+                      data-tooltip-content={movie?.movie_title}
+                    />
+                    <Tooltip
+                      className="bg-gray-500 z-20"
+                      id={`tooltip-${movie?.movie_id}`}
+                    />
+                  </Link>
+                ))}
+            </div>
+            {favorites.length > 0 && (
+              <Pagination
+                totalPages={Math.ceil(favoritesTotalCount / 35)}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
         </div>
+
+        <div className="w-1/4 hidden sm:block"></div>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
 export default Favoritos;
