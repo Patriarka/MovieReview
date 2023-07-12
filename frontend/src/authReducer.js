@@ -1,8 +1,8 @@
 const initialState = {
-  accessToken: null,
-  refreshToken: null,
-  userId: null,
-  isAuthenticated: false,
+  accessToken: localStorage.getItem("accessToken"),
+  refreshToken: localStorage.getItem("refreshToken"),
+  userId: localStorage.getItem("idUser"),
+  isAuthenticated: localStorage.getItem("idUser") !== null,
   error: null,
 };
 

@@ -60,7 +60,7 @@ export const refreshToken = (config) => {
       localStorage.setItem("tokenUser", JSON.stringify(accessToken));
 
       config.headers.Authorization = `Bearer ${accessToken}`;
-
+      
       dispatch({ type: "REFRESH_TOKEN_SUCCESS", payload: accessToken });
 
       return { response, error: null };
