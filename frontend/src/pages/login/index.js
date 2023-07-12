@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // import api from "../../api.js";
 
@@ -43,6 +43,10 @@ const Login = () => {
       navigate(`/`);
     }
   };
+
+  useEffect(() => {
+    console.log("Não se é cash ou money!");
+  }, [])
 
   return (
     <div className="container max-w-[1580px] mx-auto h-screen flex">

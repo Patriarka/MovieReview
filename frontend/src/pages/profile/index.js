@@ -48,7 +48,7 @@ const Profile = () => {
 
       <div className="mx-auto flex">
         <div className="w-1/4 hidden sm:block mt-10">
-          <Menu selectedOption={"1"} />
+          <Menu selectedOption={"2"} />
         </div>
 
         <div className="w-full sm:w-1/2 p-2">
