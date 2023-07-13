@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import Header from "../../components/header";
-
-// import Trending from "../../components/Trending";
 
 import CreatePublication from "../../components/CreatePublication";
 
@@ -14,19 +12,55 @@ import api from "../../api";
 
 const Home = () => {
   const [publications, setPublications] = useState([]);
+  const [page, setPage] = useState(1);
+  const [reachedEnd, setReachedEnd] = useState(false);
 
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const response = await api.get(`feed/?page=1`);
-        setPublications(response.data.results);
+        const response = await api.get(`/feed/?page=${page}`);
+        setPublications((prevPublications) => [
+          ...prevPublications,
+          ...response.data.results,
+        ]);
+        if (response.data.results.length === 0) {
+          setReachedEnd(true); 
+        }
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchPublications();
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight =
+        "innerHeight" in window
+          ? window.innerHeight
+          : document.documentElement.offsetHeight;
+      const body = document.body;
+      const html = document.documentElement;
+      const docHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+      const windowBottom = windowHeight + window.scrollY;;
+
+      if (windowBottom >= docHeight && !reachedEnd) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [reachedEnd]);
 
   return (
     <div className="container mx-auto max-w-[1580px]">
@@ -56,8 +90,7 @@ const Home = () => {
             ))}
         </div>
 
-        <div className="w-1/4 hidden sm:block">
-        </div>
+        <div className="w-1/4 hidden sm:block"></div>
       </div>
     </div>
   );

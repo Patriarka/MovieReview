@@ -13,10 +13,12 @@ import api from "../../api";
 const User = () => {
   const currentUserId = useSelector((state) => state.userId);
 
+  const [reachedEnd, setReachedEnd] = useState(false);
+
   const [user, setUser] = useState({});
   const [publications, setPublications] = useState([]);
   const [page, setPage] = useState(1);
-  
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -34,12 +36,46 @@ const User = () => {
 
   useEffect(() => {
     const fetchUserPublicationsData = async () => {
-        const response = await api.get(`/pubusuario/${id}/?page=${page}`);
-        setPublications(response.data.results);
-    }
+      const response = await api.get(`/pubusuario/${id}/?page=${page}`);
+      setPublications((prevPublications) => [
+        ...prevPublications,
+        ...response.data.results,
+      ]);
+      if (response.data.results.length === 0) {
+        setReachedEnd(true);
+      }
+    };
 
     fetchUserPublicationsData();
-  }, [id, page])
+  }, [id, page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight =
+        "innerHeight" in window
+          ? window.innerHeight
+          : document.documentElement.offsetHeight;
+      const body = document.body;
+      const html = document.documentElement;
+      const docHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+      const windowBottom = windowHeight + window.scrollY;
+
+      if (windowBottom >= docHeight && !reachedEnd) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [reachedEnd]);
 
   return (
     <div className="container mx-auto max-w-[1580px]">
