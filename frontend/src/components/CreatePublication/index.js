@@ -14,7 +14,7 @@ import {
   StyledInput,
   StyledPublicationButton,
   StyledRate,
-} from "../../styles/components/PublicationStyle.js";
+} from "../../styles/components/CreatePublicationStyle.js";
 
 import { toast } from "react-toastify";
 
