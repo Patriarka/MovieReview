@@ -35,18 +35,6 @@ const Publication = ({
     setShowPoster(false);
   };
 
-  const posterMouseEnterHandler = () => {
-    if (!showPoster) {
-      setShowPoster(true);
-    }
-  };
-
-  const posterMouseLeaveHandler = () => {
-    if (showPoster) {
-      setShowPoster(false);
-    }
-  };
-
   const handleProfile = () => {
     const url = `/user/${userID}`;
     navigate(url);
