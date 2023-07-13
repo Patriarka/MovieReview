@@ -3,13 +3,20 @@ import "./styles.css";
 
 import userImage from "../../assets/user-default.png";
 
-import { LikeOutlined, DislikeOutlined, CommentOutlined } from "@ant-design/icons";
+import {
+  LikeOutlined,
+  DislikeOutlined,
+} from "@ant-design/icons";
+
+import { BiCommentDetail } from 'react-icons/bi';
 
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
 import api from "../../api";
+
+import { Rate } from "antd";
 
 const Publication = ({
   userID,
@@ -23,17 +30,8 @@ const Publication = ({
 }) => {
   const [userPublicationOwner, setUserPublicationOwner] = useState(null);
   const [moviePublication, setMoviePublication] = useState(null);
-  const [showPoster, setShowPoster] = useState(false);
 
   const navigate = useNavigate();
-
-  const showPosterHandler = () => {
-    setShowPoster(true);
-  };
-
-  const hidePosterHandler = () => {
-    setShowPoster(false);
-  };
 
   const handleProfile = () => {
     const url = `/user/${userID}`;
@@ -91,8 +89,6 @@ const Publication = ({
             Crítica de
             <span
               className="cursor-pointer hover:text-gray-500 ml-1 transition duration-300"
-              onMouseEnter={showPosterHandler}
-              onMouseLeave={hidePosterHandler}
               onClick={handleMovie}
             >
               {moviePublication?.title}
@@ -105,19 +101,28 @@ const Publication = ({
       </div>
 
       {/* Colocar uma imagem caso tenha */}
-      
 
-      {/* <div className="flex items-center justify-center gap-8">
-        <div className="hover:text-gray-500 flex items-center justify-between gap-2 cursor-pointer">
-          <LikeOutlined /> Curtir
+      <div className="ml-5 mt-2 mb-2">
+        <Rate 
+          value={rating}
+          disabled
+        />
+      </div>
+
+      <div className="text-sm ml-5 mt-4 flex items-center gap-8">
+        <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
+          <LikeOutlined />
+          <h1>Curtir</h1>
         </div>
-        <div className="flex items-center justify-between gap-2 cursor-pointer">
-          <DislikeOutlined /> Descurtir
+        <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
+          <DislikeOutlined />
+          <h1>Descurtir</h1>
         </div>
-        <div className="flex items-center justify-between gap-2 cursor-pointer">
-          <CommentOutlined /> Comentar
+        <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
+          <BiCommentDetail size={17} />
+          <h1>Comentários</h1>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
