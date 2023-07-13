@@ -16,6 +16,8 @@ import { StyledButton } from "../../styles/pages/ProfileStyles";
 const Profile = () => {
   const userId = useSelector((state) => state.userId);
 
+  const [reachedEnd, setReachedEnd] = useState(false);
+
   const [user, setUser] = useState({});
   const [page, setPage] = useState(1);
   const [publications, setPublications] = useState([]);
@@ -35,12 +37,50 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserPublicationsData = async () => {
-      const response = await api.get(`/pubusuario/${userId}/?page=${page}`);
-      setPublications(response.data.results);
+      try {
+        const response = await api.get(`/pubusuario/${userId}/?page=${page}`);
+        setPublications((prevPublications) => [
+          ...prevPublications,
+          ...response.data.results,
+        ]);
+        if (response.data.results.length === 0) {
+          setReachedEnd(true); 
+        }
+      } catch (error) {
+        console.log(error)
+      }
     };
 
     fetchUserPublicationsData();
   }, [userId, page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight =
+        "innerHeight" in window
+          ? window.innerHeight
+          : document.documentElement.offsetHeight;
+      const body = document.body;
+      const html = document.documentElement;
+      const docHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+      const windowBottom = windowHeight + window.scrollY;;
+
+      if (windowBottom >= docHeight && !reachedEnd) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [reachedEnd]);
 
   return (
     <div className="container mx-auto max-w-[1580px]">
