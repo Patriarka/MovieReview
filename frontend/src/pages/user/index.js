@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import { useSelector } from "react-redux";
 
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Header from "../../components/header";
 import Menu from "../../components/menu";
 import Publication from "../../components/Publication";
+
+import { StyledButton } from "../../styles/pages/UserStyles";
 
 import api from "../../api";
 
@@ -15,6 +17,7 @@ const User = () => {
 
   const [reachedEnd, setReachedEnd] = useState(false);
 
+  const [isHovered, setIsHovered] = useState(false);
   const [user, setUser] = useState({});
   const [publications, setPublications] = useState([]);
   const [page, setPage] = useState(1);
@@ -26,6 +29,7 @@ const User = () => {
       try {
         const response = await api.get(`/usuarios/${id}/`);
         setUser(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -77,6 +81,36 @@ const User = () => {
     };
   }, [reachedEnd]);
 
+  const unfollow = async () => {
+    try {
+      const url = `/usuarios/${user.id}/unfollow/`;
+      await api.post(url, null);
+
+      setUser((prevState) => ({
+        ...prevState,
+        is_followed: false,
+      }));
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const follow = async () => {
+    try {
+      const url = `/usuarios/${user.id}/follow/`;
+      await api.post(url, null);
+
+      setUser((prevState) => ({
+        ...prevState,
+        is_followed: true,
+      }));
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="container mx-auto max-w-[1580px]">
       <Header />
@@ -96,14 +130,22 @@ const User = () => {
             <div className="mt-4">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
 
-              <div className="text-base flex gap-2 text-gray-600">
-                <Link>
-                  <h2 className="hover:text-black">Seguidores</h2>
-                </Link>
-                <Link>
-                  <h2 className="hover:text-black">Seguindo</h2>
-                </Link>
-              </div>
+              {currentUserId != user.id && (
+                <div className="mt-2">
+                  {user.is_followed ? (
+                    <StyledButton
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                      onClick={unfollow}
+                      isFollowed
+                    >
+                      {isHovered ? "Deixar de Seguir" : "Seguindo"}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton onClick={follow}>Seguir</StyledButton>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
