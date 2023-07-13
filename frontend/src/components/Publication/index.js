@@ -3,12 +3,7 @@ import "./styles.css";
 
 import userImage from "../../assets/user-default.png";
 
-import {
-  LikeOutlined,
-  DislikeOutlined,
-} from "@ant-design/icons";
-
-import { BiCommentDetail } from 'react-icons/bi';
+import { BiCommentDetail } from "react-icons/bi";
 
 import { useNavigate } from "react-router-dom";
 
@@ -18,9 +13,14 @@ import api from "../../api";
 
 import { Rate } from "antd";
 
+import {
+  LikeStyled,
+  DeslikeStyled,
+} from "../../styles/components/PublicationStyle";
+
 const Publication = ({
   userID,
-  postID,
+  idPost,
   movieID,
   rating,
   pubText,
@@ -30,6 +30,9 @@ const Publication = ({
 }) => {
   const [userPublicationOwner, setUserPublicationOwner] = useState(null);
   const [moviePublication, setMoviePublication] = useState(null);
+
+  const [like, setLike] = useState(false);
+  const [dislike, setDislike] = useState(false);
 
   const navigate = useNavigate();
 
@@ -66,6 +69,53 @@ const Publication = ({
     fetchData();
   }, [movieID]);
 
+  useEffect(() => {
+    const fetchWasLiked = async () => {
+      try {
+        const response = await api.get(`/is_liked/${idPost}/`);
+        const { is_liked } = response.data;
+        setLike(is_liked);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchWasDisliked = async () => {
+      try {
+        const response = await api.get(`/is_desliked/${idPost}/`)
+        const { is_desliked } = response.data;
+        setDislike(is_desliked);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchWasLiked();
+    fetchWasDisliked();
+  }, [idPost]);
+
+  const handleLike = async () => {
+    const url = `/likes/${idPost}/`;
+    try {
+      const response = await api.post(url, null);
+      const { is_liked } = response.data;
+      setLike(is_liked);
+    } catch (error) {
+      console.error("Erro ao curtir o post:", error);
+    }
+  };
+
+  const handleDeslike = async () => {
+    const url = `/deslikes/${idPost}/`;
+    try {
+      const response = await api.post(url, null);
+      const { is_desliked } = response.data;
+      setDislike(is_desliked);
+    } catch (error) {
+      console.error("Erro ao descurtir o post:", error);
+    }
+  };
+
   return (
     <div className="w-full bg-white rounded-xl mt-2 pb-4 pl-2 pr-4 mb-10 shadow-lg">
       <div className="flex items-center p-4 gap-4">
@@ -100,24 +150,27 @@ const Publication = ({
         <p className="overflow-wrap break-word text-justify">{pubText}</p>
       </div>
 
-      {/* Colocar uma imagem caso tenha */}
-
       <div className="ml-5 mt-2 mb-2">
-        <Rate 
-          value={rating}
-          disabled
-        />
+        <Rate value={rating} disabled />
       </div>
 
       <div className="text-sm ml-5 mt-4 flex items-center gap-8">
-        <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
-          <LikeOutlined />
+        <div
+          className="flex items-center gap-2 hover:text-gray-500 cursor-pointer"
+          onClick={handleLike}
+        >
+          <LikeStyled like={like} size={18} />
           <h1>Curtir</h1>
         </div>
-        <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
-          <DislikeOutlined />
+
+        <div
+          className="flex items-center gap-2 hover:text-gray-500 cursor-pointer"
+          onClick={handleDeslike}
+        >
+          <DeslikeStyled dislike={dislike} size={18} />
           <h1>Descurtir</h1>
         </div>
+
         <div className="flex items-center gap-2 hover:text-gray-500 cursor-pointer">
           <BiCommentDetail size={17} />
           <h1>Comentários</h1>
