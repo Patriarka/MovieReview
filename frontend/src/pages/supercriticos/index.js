@@ -57,11 +57,6 @@ const Supercriticos = () => {
         };
     }, [])
 
-    function handlePageChange(event, pageNumber) {
-        event.preventDefault();
-        setCurrentPage(pageNumber);
-    }
-
     return (
         <>
             {(window.innerWidth > 760) ?
@@ -111,7 +106,7 @@ const Supercriticos = () => {
                         <Pagination
                             totalPages={Math.ceil(superReviewersCount / 10) > 7 ? 7 : Math.ceil(superReviewersCount/10)}
                             currentPage={1}
-                            onPageChange={handlePageChange}
+                            setCurrentPage={setCurrentPage}
                         />
                     </div>
                 </div>

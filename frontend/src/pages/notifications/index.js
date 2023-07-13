@@ -64,11 +64,6 @@ const Notifications = () => {
         };
     }, [])
 
-    function handlePageChange(event, pageNumber) {
-        event.preventDefault();
-        setCurrentPage(pageNumber);
-    }
-
     return (
         <>
             {(window.innerWidth > 760) ?
@@ -118,7 +113,7 @@ const Notifications = () => {
                         <Pagination
                             totalPages={Math.ceil(notificationsCount / 20) > 7 ? 7 : Math.ceil(notificationsCount/20)}
                             currentPage={1}
-                            onPageChange={handlePageChange}
+                            setCurrentPage={setCurrentPage}
                         />
                     </div>
                 </div>

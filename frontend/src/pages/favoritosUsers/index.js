@@ -155,11 +155,6 @@ const FavoritosUsers = () => {
         get_data()
     }, [currentPage])
 
-    function handlePageChange(event, pageNumber) {
-        event.preventDefault();
-        setCurrentPage(pageNumber);
-    }
-
     return (
         <>
             {(window.innerWidth > 760) ?
@@ -228,7 +223,7 @@ const FavoritosUsers = () => {
                             <Pagination
                                 totalPages={totalPages}
                                 currentPage={currentPage}
-                                onPageChange={handlePageChange}
+                                setCurrentPage={setCurrentPage}
                             />
                         </div>
                     </div>
