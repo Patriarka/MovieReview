@@ -40,11 +40,6 @@ const Watchlist = () => {
     fetchWatchlistData();
   }, [id, currentPage]);
 
-  function handlePageChange(event, pageNumber) {
-    event.preventDefault();
-    setCurrentPage(pageNumber);
-  }
-
   return (
     <div className="container mx-auto max-w-[1580px]">
       <Header />
@@ -87,7 +82,7 @@ const Watchlist = () => {
                 <Pagination
                   totalPages={Math.ceil(watchlistTotalCount / 35)}
                   currentPage={currentPage}
-                  onPageChange={handlePageChange}
+                  setCurrentPage={setCurrentPage}
                 />
               )}
           </div>

@@ -37,11 +37,6 @@ const Favoritos = () => {
     fetchWatchlistData();
   }, [id, currentPage]);
 
-  function handlePageChange(event, pageNumber) {
-    event.preventDefault();
-    setCurrentPage(pageNumber);
-  }
-
   return (
     <div className="container mx-auto max-w-[1580px]">
       <Header />
@@ -84,7 +79,7 @@ const Favoritos = () => {
               <Pagination
                 totalPages={Math.ceil(favoritesTotalCount / 35)}
                 currentPage={currentPage}
-                onPageChange={handlePageChange}
+                setCurrentPage={setCurrentPage}
               />
             )}
           </div>
