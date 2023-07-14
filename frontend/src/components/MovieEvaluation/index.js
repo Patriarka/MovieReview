@@ -201,7 +201,7 @@ const MovieEvaluation = ({ movie }) => {
           onMouseEnter={() => setIsFavoriteHovered(true)}
           onMouseLeave={() => setIsFavoriteHovered(false)}
         >
-          <FaStar color={isMovieOnFavoriteList ? "gold" : "white"} size={16} />
+          <FaStar color={isMovieOnFavoriteList ? "#fadb14" : "white"} size={16} />
           {isMovieOnFavoriteList ? (
             <label className="text-xs cursor-pointer"> {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}</label>
           ) : (
