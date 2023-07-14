@@ -100,6 +100,7 @@ const Profile = () => {
             />
             <div className="w-full mt-4 flex flex-col">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
+              <p className="my-2 text-sm font-light">{user?.bio_text}</p>
 
               <div className="text-black-50 flex gap-4 justify-end text-sm pr-4 mt-auto">
                 <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">

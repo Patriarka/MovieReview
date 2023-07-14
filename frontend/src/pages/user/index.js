@@ -129,6 +129,7 @@ const User = () => {
             />
             <div className="mt-4 w-full flex flex-col">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
+              <p className="my-2 text-sm font-light">{user?.bio_text}</p>
 
               {currentUserId != user.id && (
                 <div className="mt-2">
