@@ -44,10 +44,10 @@ const Profile = () => {
           ...response.data.results,
         ]);
         if (response.data.results.length === 0) {
-          setReachedEnd(true); 
+          setReachedEnd(true);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
 
@@ -69,7 +69,7 @@ const Profile = () => {
         html.scrollHeight,
         html.offsetHeight
       );
-      const windowBottom = windowHeight + window.scrollY;;
+      const windowBottom = windowHeight + window.scrollY;
 
       if (windowBottom >= docHeight && !reachedEnd) {
         setPage((prevPage) => prevPage + 1);
@@ -98,16 +98,28 @@ const Profile = () => {
               src={user?.profile_image}
               alt={user?.id}
             />
-            <div className="mt-4">
+            <div className="w-full mt-4 flex flex-col">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
 
-              <div className="text-base flex gap-2 text-gray-600">
-                <Link>
-                  <h2 className="hover:text-black">Seguidores</h2>
-                </Link>
-                <Link>
-                  <h2 className="hover:text-black">Seguindo</h2>
-                </Link>
+              <div className="text-black-50 flex gap-4 justify-end text-sm pr-4 mt-auto">
+                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
+                  <h2 className="text-center text-black-50">
+                    {user.following_count}
+                  </h2>
+                  <h3>Seguindo</h3>
+                </div>
+                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
+                  <h2 className="text-center text-black-50">
+                    {user.followers_count}
+                  </h2>
+                  <h3>Seguidores</h3>
+                </div>
+                <div className="flex-col cursor-pointer hover:text-[#d30069]">
+                  <h2 className="text-center text-black-50">
+                    {user.publications_count}
+                  </h2>
+                  <h3>Publicações</h3>
+                </div>
               </div>
             </div>
           </div>

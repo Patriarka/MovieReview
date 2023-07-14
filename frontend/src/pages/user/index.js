@@ -121,16 +121,16 @@ const User = () => {
         </div>
 
         <div className="w-full sm:w-1/2 p-2">
-          <div className="flex gap-2 mt-8">
+          <div className="flex gap-2 mt-8 max-h-[160px]">
             <img
               className="w-40 h-50 rounded-full object-cover"
               src={user?.profile_image}
               alt={user?.id}
             />
-            <div className="mt-4 w-full">
+            <div className="mt-4 w-full flex flex-col">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
 
-              {currentUserId !== user.id && (
+              {currentUserId != user.id && (
                 <div className="mt-2">
                   {user.is_followed ? (
                     <StyledButton
@@ -147,7 +147,7 @@ const User = () => {
                 </div>
               )}
 
-              <div className="text-black-50 flex gap-4 m-4 justify-end text-sm pr-4">
+              <div className="text-black-50 flex gap-4 pr-4 justify-end text-sm mt-auto">
                 <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">{user.following_count}</h2>
                   <h3>Seguindo</h3>
