@@ -22,7 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         request = self.context.get('request')
         user_id = request.user.id
+        
         data['is_followed'] = Connection.objects.filter(usuario_alpha=user_id, usuario_beta=instance).exists()
+        data['following_count'] = Connection.objects.filter(usuario_alpha=instance).count()
+        data['followers_count'] = Connection.objects.filter(usuario_beta=instance).count()
+        
         return data
 
 class PublicationSerializer(serializers.ModelSerializer):
