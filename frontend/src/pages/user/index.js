@@ -148,19 +148,18 @@ const User = () => {
               )}
 
               <div className="text-black-50 flex gap-4 m-4 justify-end text-sm pr-4">
-                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-blue-500">
+                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">{user.following_count}</h2>
                   <h3>Seguindo</h3>
                 </div>
-                {/* <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-blue-500"> */}
-                <div className="flex-col cursor-pointer hover:text-blue-500">
+                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">{user.followers_count}</h2>
                   <h3>Seguidores</h3>
                 </div>
-                {/* <div className="flex-col cursor-pointer hover:text-blue-500">
+                <div className="flex-col cursor-pointer hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">{user.publications_count}</h2>
                   <h3>Publicações</h3>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
