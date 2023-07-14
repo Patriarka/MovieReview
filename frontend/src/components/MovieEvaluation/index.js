@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import { Rate } from "antd";
 
 import {
-  StyledInput,
   StyledPublicationButton,
   StyledRate,
 } from "../../styles/components/MovieEvaluationStyle.js";
@@ -30,6 +29,9 @@ const MovieEvaluation = ({ movie }) => {
 
   const [isMovieOnFavoriteList, setIsMovieOnFavoriteList] = useState(false);
   const [isMovieOnWatchList, setIsMovieOnWatchList] = useState(false);
+
+  const [isFavoriteHovered, setIsFavoriteHovered] = useState(false);
+  const [isWatchlistHovered, setIsWatchlistHovered] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -194,28 +196,33 @@ const MovieEvaluation = ({ movie }) => {
       </Modal>
       <div className="flex-col gap-2 w-full max-w-[270px] mx-auto p-2 rounded-xl justify-around">
         <button
-          className="cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-gray-100 hover:bg-gray-400 p-2 gap-2"
+          className="cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
           onClick={isMovieOnFavoriteList ? handleDisfavor : handleFavorite}
+          onMouseEnter={() => setIsFavoriteHovered(true)}
+          onMouseLeave={() => setIsFavoriteHovered(false)}
         >
-          <FaStar color={isMovieOnFavoriteList ? "gold" : "black"} size={17} />
+          <FaStar color={isMovieOnFavoriteList ? "gold" : "white"} size={16} />
           {isMovieOnFavoriteList ? (
-            <label className="text-xs cursor-pointer"> Favoritado</label>
+            <label className="text-xs cursor-pointer"> {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}</label>
           ) : (
             <label className="text-xs cursor-pointer"> Favoritar</label>
           )}
         </button>
 
         <button
-          className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-gray-100 hover:bg-gray-400 p-2 gap-2"
+          className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
           onClick={
             isMovieOnWatchList ? handleRemovetoWatchlist : handleAddToWatchlist
           }
+          onMouseEnter={() => setIsWatchlistHovered(true)}
+          onMouseLeave={() => setIsWatchlistHovered(false)}
         >
-          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "black"} size={17} />
+          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "white"} size={17} />
+          
           {isMovieOnWatchList ? (
             <label className="text-xs cursor-pointer">
               {" "}
-              Remover da Watchlist
+              {isWatchlistHovered ? "Remover da Watchlist" : "Adicionado na Watchlist"}
             </label>
           ) : (
             <label className="text-xs cursor-pointer">
