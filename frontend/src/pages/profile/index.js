@@ -100,6 +100,9 @@ const Profile = () => {
             />
             <div className="w-full mt-4 flex flex-col">
               <h2 className="text-lg font-bold">{user?.nickname}</h2>
+              <Link to="/edit-profile" className="hover:text-blue-500">
+                <p>Editar Perfil</p>
+              </Link>
               <p className="my-2 text-sm font-light">{user?.bio_text}</p>
 
               <div className="text-black-50 flex gap-4 justify-end text-sm pr-4 mt-auto">
