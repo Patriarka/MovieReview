@@ -106,18 +106,18 @@ const Profile = () => {
               <p className="my-2 text-sm font-light">{user?.bio_text}</p>
 
               <div className="text-black-50 flex gap-4 justify-end text-sm pr-4 mt-auto">
-                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
+                <Link className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">
                     {user.following_count}
                   </h2>
                   <h3>Seguindo</h3>
-                </div>
-                <div className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
+                </Link>
+                <Link to={{ pathname: `/followers/${userId}` }} className="flex-col cursor-pointer border-r-2 border-black-30 pr-4 hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">
                     {user.followers_count}
                   </h2>
                   <h3>Seguidores</h3>
-                </div>
+                </Link>
                 <div className="flex-col cursor-pointer hover:text-[#d30069]">
                   <h2 className="text-center text-black-50">
                     {user.publications_count}
