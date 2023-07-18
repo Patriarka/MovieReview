@@ -15,7 +15,7 @@ const Movie = () => {
 
   const [movie, setMovie] = useState({});
   const [streamings, setStreamings] = useState([]);
-  const [trailerUrl, setTrailerUrl] = useState('');
+  const [trailerUrl, setTrailerUrl] = useState("");
 
   useEffect(() => {
     const fetchMovieData = async () => {
@@ -34,13 +34,17 @@ const Movie = () => {
       try {
         const urlPT = `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=pt-BR`;
         const responsePT = await axios.get(urlPT);
-        
+
         if (responsePT.data.results.length > 0) {
-            setTrailerUrl(`https://www.youtube.com/embed/${responsePT.data.results[0]?.key}?=autoplay=1`);
+          setTrailerUrl(
+            `https://www.youtube.com/embed/${responsePT.data.results[0]?.key}?=autoplay=1`
+          );
         } else {
           const urlUS = `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`;
           const responseUS = await axios.get(urlUS);
-          setTrailerUrl(`https://www.youtube.com/embed/${responseUS.data.results[0]?.key}?=autoplay=1`);
+          setTrailerUrl(
+            `https://www.youtube.com/embed/${responseUS.data.results[0]?.key}?=autoplay=1`
+          );
         }
       } catch (error) {
         console.log(error);
@@ -90,10 +94,13 @@ const Movie = () => {
 
             <div className="flex gap-2">
               {movie.genres?.length > 0 ? (
-                movie.genres.map((genre) => (
-                  <p className="font-bold" key={genre.id}>
-                    {genre.name}
-                  </p>
+                movie.genres.map((genre, index) => (
+                  <React.Fragment key={genre.id}>
+                    <p className="font-bold">{genre.name}</p>
+                    {index < movie.genres.length - 1 && (
+                      <span className="separator">-</span>
+                    )}
+                  </React.Fragment>
                 ))
               ) : (
                 <p>Nenhum gênero encontrado.</p>
