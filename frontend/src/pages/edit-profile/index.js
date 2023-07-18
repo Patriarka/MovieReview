@@ -1,222 +1,227 @@
-import React, { useState, useEffect } from 'react'
-import './styles.css'
-import Menu from '../../components/menu'
-import Header from '../../components/header'
-import HeaderDesktop from "../../components/headerDesktop";
-import ImageUpload from '../../components/ImageUpload';
+import React, { useEffect, useState } from "react";
 
-import api from '../../api';
+import Header from "../../components/header";
+import Menu from "../../components/menu";
 
-import { useNavigate, Link } from 'react-router-dom';
+import { Modal, Form, Input } from "antd";
 
-import { MdArrowBack } from "react-icons/md";
+import api from "../../api";
 
-import { FaCheck } from 'react-icons/fa';
+import { useSelector } from "react-redux";
+
+import { UserOutlined } from "@ant-design/icons";
+
+import {
+  StyledButton,
+  StyledInput,
+  StyledSecondaryButton,
+} from "../../styles/pages/EditProfileStyles.js";
+
+import { AiOutlineFileText } from "react-icons/ai";
+
+import { useNavigate } from "react-router-dom";
 
 const EditProfile = () => {
-    const navigate = useNavigate()
+  const [form] = Form.useForm();
 
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [minLoadingTimePassed, setMinLoadingTimePassed] = useState(true);
-    const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [passwordForm] = Form.useForm();
 
-    const [user, setUser] = useState({
-        full_name: '',
-        nickname: '',
-        bio_text: ''
-    });
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        let id = localStorage.getItem('idUser')
+  const userId = useSelector((state) => state.userId);
 
-        id = id.substring(1, id.length - 1)
+  const [loading, setLoading] = useState(false);
 
-        const fetchUser = async () => {
-            try {
-                const response = await api.get(`/usuarios/${id}/`);
+  const [user, setUser] = useState({
+    fullname: "",
+    nickname: "",
+    bioText: "",
+    email: "",
+  });
 
-                setUser({
-                    full_name: response.data.full_name,
-                    nickname: response.data.nickname,
-                    bio_text: response.data.bio_text,
-                    profile_image: response.data.profile_image
-                });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const url = `/usuarios/${userId}/`;
+        const response = await api.get(url);
+        const { full_name, nickname, bio_text, email } = response.data;
 
-            } catch (error) {
-                console.error('Erro ao carregar os dados do usuário:', error);
-            }
-        };
-        
-        fetchUser();
-    }, [])
-
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function handleSaveChanges() {
-        let id = localStorage.getItem('idUser')
-        let token = localStorage.getItem('tokenUser')
-
-        id = id.substring(1, id.length - 1)
-        token = token.substring(1, token.length - 1)
-
-        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' };
-
-        if (!user.full_name || !user.nickname || !user.bio_text) {
-            alert("Por favor, preencha todos os campos");
-            return;
-        }
-
-        const formData = new FormData();
-
-        setIsLoading(true);
-
-        formData.append('profile_image', selectedFile);
-
-        Object.entries(user).forEach(([key, value]) => {
-            console.log(key, value)
-            if (key !== "profile_image")
-                formData.append(key, value);
+        setUser({
+          fullname: full_name,
+          nickname,
+          email,
+          bioText: bio_text,
         });
-
-        try {
-            api.patch(`/usuarios/${id}/`, formData, { headers })
-
-            setMinLoadingTimePassed(false);
-
-            await delay(2000);
-
-            setMinLoadingTimePassed(true);
-
-            setIsLoading(false);
-            setShowConfirmation(true);
-
-            await delay(2000);
-
-            setShowConfirmation(false);
-
-            navigate('/profile')
-        } catch (error) {
-            console.error('Erro ao atualizar os dados do usuário:', error);
-
-        }          
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-return (
-    <>
-        {(window.innerWidth > 760) ?
-            <HeaderDesktop />
-            :
+    fetchUserData();
+  }, [userId]);
 
-            <Header />
-        }
-        <div className="content-all">
-            {(isLoading || !minLoadingTimePassed) ? (
-                <div className="loading-overlay">
-                    <div className="loading-indicator"></div>
-                </div>
- 
-                
-            ) : showConfirmation ? (
-                <div className="confirmation-overlay">
-                    <div className="confirmation-icon">
-                        <FaCheck size={32} color="green" />
-                    </div>
-                </div>
-            ) : null}
+  const handleEditProfile = async (values) => {
+    const formData = new FormData();
 
-            <div className="left-content">
-                <Menu />
-            </div>
-            <div className="content-box-profile">
-                    <div className='content-edit-space'>
-                        <div className="followers-info">
-                            <Link
-                                className="back-btn"
-                                to={`/profile`}
-                                style={{ textDecoration: "none", color: "#fff" }}
-                            >
-                                <MdArrowBack size={32} className="back-icon" />
-                            </Link>
+    formData.append("full_name", values.fullname);
+    formData.append("nickname", values.username);
+    formData.append("bio_text", values.bioText);
 
-                            <p>Editar Perfil</p>
-                        </div>
+    setLoading(true);
 
-                        {/* <div className="profile-info">
-                            <img className="image-user" alt='image-user' src="https://i.imgur.com/piVx6dg.png" />
-                            <p className="name-user">{user.name}</p>
-                        </div> */}
+    try {
+      const url = `/usuarios/${userId}/`;
+      api.patch(url, formData);
 
-                        <div className="conf-profile">
-                            <div className='row'>
-                                <p>Seu nome</p>
-                                <input maxLength={240} placeholder={user.full_name} id='name' className="content-input-edit" value={user.full_name} onChange={(event) => setUser({ ...user, full_name: event.target.value })} />
-                            </div>
-                            <div className='row'>
-                                <p>Seu username</p>
-                                <input maxLength={55} placeholder={user.nickname} id='username' className="content-input-edit" value={user.nickname} onChange={(event) => setUser({ ...user, nickname: event.target.value })} />
-                            </div>
-                            <div className='row-textarea'>
-                                <p>Sobre você</p>
-                                <textarea maxLength={220} placeholder={user.bio_text} id="w3review" rows="4" cols="50" className="content-input-edit-about" value={user.bio_text} onChange={(event) => setUser({ ...user, bio_text: event.target.value })}> </textarea>
-                            </div>
-                        </div>
-                        <div className='row-textarea image'>
-                            <div className='image-block'>
-                                <p>Alterar Avatar</p>
-                                {!selectedFile && (<img className="image-user" alt='image-user' src={user?.profile_image ? user?.profile_image : "https://i.imgur.com/piVx6dg.png"} style={{ objectFit: "cover" }} />)}
-                            </div>
+      setLoading(false);
+      navigate("/profile");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-                            <ImageUpload
-                                selectedFile={selectedFile}
-                                setSelectedFile={setSelectedFile}
-                            />
-                        </div>
-                        <div className='row-button'>
-                            <button className='button-simple-edit' onClick={handleSaveChanges}><p>Concluir alterações</p></button>
-                        </div>
-                    </div>
-                </div>
-            <div className="right-content">
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
 
-            </div>
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  return (
+    <div className="container mx-auto max-w-[1580px]">
+      <Header />
+
+      <div className="mx-auto flex">
+        <div className="w-1/4 hidden sm:block mt-10">
+          <Menu selectedOption={"2"} />
         </div>
-    </>
-)
-}
+
+        <div className="w-full sm:w-1/2 p-2">
+          <Form
+            form={form}
+            onFinish={handleEditProfile}
+            className="max-w-[80%] mx-auto pt-8"
+            layout="vertical"
+          >
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold">Editar Perfil</h1>
+            </div>
+
+            {user.fullname && (
+              <Form.Item
+                name="fullname"
+                label="Nome completo"
+                initialValue={user?.fullname}
+              >
+                <StyledInput prefix={<UserOutlined />} />
+              </Form.Item>
+            )}
+
+            {user?.nickname && (
+              <Form.Item
+                name="username"
+                label="Nome de Usuário"
+                initialValue={user?.nickname}
+              >
+                <StyledInput prefix={<UserOutlined />} />
+              </Form.Item>
+            )}
+
+            {user.bioText && (
+              <Form.Item 
+                name="bioText" 
+                label="Bio" 
+                initialValue={user.bioText}
+              >
+                <StyledInput prefix={<AiOutlineFileText />} />
+              </Form.Item>
+            )}
+
+            <div className="w-full flex justify-between">
+              <StyledSecondaryButton onClick={showModal}>
+                Alterar Senha
+              </StyledSecondaryButton>
+
+              <StyledButton loading={loading} type="primary" htmlType="submit">
+                Salvar Alterações
+              </StyledButton>
+            </div>
+          </Form>
+
+          <Modal
+            title="Alterar Senha"
+            open={isModalVisible}
+            onCancel={handleCancel}
+            footer={[
+              <StyledSecondaryButton key="cancel" onClick={handleCancel}>
+                Cancelar
+              </StyledSecondaryButton>,
+              <StyledButton
+                key="submit"
+                loading={loading}
+                type="primary"
+                form="passwordForm"
+                htmlType="submit"
+              >
+                Salvar Senha
+              </StyledButton>,
+            ]}
+          >
+            <Form form={passwordForm} id="passwordForm" layout="vertical">
+              <Form.Item
+                name="currentPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor, insira sua senha atual",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="Senha Atual" />
+              </Form.Item>
+              <Form.Item
+                name="newPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor, insira a nova senha",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="Nova Senha" />
+              </Form.Item>
+              <Form.Item
+                name="confirmNewPassword"
+                dependencies={["newPassword"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor, confirme a nova senha",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPassword") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("As senhas não conferem")
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder="Confirma Senha" />
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
+
+        <div className="w-1/4 hidden sm:block"></div>
+      </div>
+    </div>
+  );
+};
 
 export default EditProfile;
-
-
-
-
-
-
-
-
-
-
-{/* <div className="content-box-profile">
-<div className='content-edit-space'>
-    <h2>Editar Perfil</h2>
-
-    <div className="conf-profile">
-        <div className='row'>
-            <p>Seu nome</p>
-            <input maxLength={240} placeholder={user.full_name} id='name' className="content-input-edit" value={user.full_name} onChange={(event) => setUser({ ...user, full_name: event.target.value })} />
-        </div>
-        <div className='row'>
-            <p>Seu username</p>
-            <input maxLength={55} placeholder={user.nickname} id='username' className="content-input-edit" value={user.nickname} onChange={(event) => setUser({ ...user, nickname: event.target.value })} />
-        </div>
-        <div className='row'>
-            <p>Sobre você</p>
-            <textarea maxLength={220} placeholder={user.bio_text} id="w3review" rows="4" cols="50" className="content-input-edit" value={user.bio_text} onChange={(event) => setUser({ ...user, bio_text: event.target.value })}> </textarea>
-        </div>
-        
-    </div>
-    <button className='button-simple' onClick={handleSaveChanges}><p>Concluir alterações</p></button>
-</div>
-</div> */}

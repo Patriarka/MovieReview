@@ -44,10 +44,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Não se é cash ou money!");
-  }, [])
-
   return (
     <div className="container max-w-[1580px] mx-auto h-screen flex">
       <div className="w-1/2 hidden sm:block">
