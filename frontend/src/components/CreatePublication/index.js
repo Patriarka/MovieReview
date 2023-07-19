@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { Input, Modal, Select, message, Upload } from "antd";
 
@@ -10,11 +10,15 @@ import axios from "axios";
 
 import api from "../../api.js";
 
+import userImage from "../../assets/user-default.png";
+
 import {
   StyledInput,
   StyledPublicationButton,
   StyledRate,
 } from "../../styles/components/CreatePublicationStyle.js";
+
+import { useSelector } from "react-redux";
 
 import { toast } from "react-toastify";
 
@@ -23,6 +27,10 @@ const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const CreatePublication = ({ setPublications }) => {
+  const userId = useSelector((state) => state.userId);
+
+  const [user, setUser] = useState(null);
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const [inputValue, setInputValue] = useState("");
@@ -31,6 +39,19 @@ const CreatePublication = ({ setPublications }) => {
   const [selectedMovie, setSelectedMovie] = useState(null);
 
   const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`usuarios/${userId}/`);
+        setUser(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   // const [selectedFile, setSelectedFile] = useState(null);
 
@@ -120,7 +141,9 @@ const CreatePublication = ({ setPublications }) => {
         <img
           className="w-12 h-12 rounded-full object-cover"
           src={
-            "https://www.cnnbrasil.com.br/wp-content/uploads/2021/06/21995_47022457A67E1FF5.jpg"
+            user?.profile_image
+              ? user?.profile_image
+              : userImage
           }
           alt="user"
         />
