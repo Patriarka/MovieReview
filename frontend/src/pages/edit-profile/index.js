@@ -37,7 +37,6 @@ const EditProfile = () => {
     fullname: "",
     nickname: "",
     bioText: "",
-    email: "",
   });
 
   useEffect(() => {
@@ -45,12 +44,11 @@ const EditProfile = () => {
       try {
         const url = `/usuarios/${userId}/`;
         const response = await api.get(url);
-        const { full_name, nickname, bio_text, email } = response.data;
+        const { full_name, nickname, bio_text } = response.data;
 
         setUser({
           fullname: full_name,
           nickname,
-          email,
           bioText: bio_text,
         });
       } catch (error) {
