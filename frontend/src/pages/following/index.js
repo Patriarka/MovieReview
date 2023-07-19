@@ -1,138 +1,188 @@
 import React, { useState, useEffect } from "react";
-import Menu from "../../components/menu";
-import api from "../../api";
+
 import Header from "../../components/header";
-import HeaderDesktop from "../../components/headerDesktop";
+import Menu from "../../components/menu";
 
-import CardFollower from "../../components/CardFollower";
+import { useParams, Link } from "react-router-dom";
 
-import { MdArrowBack } from "react-icons/md";
+import api from "../../api";
 
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { StyledButton } from '../../styles/pages/FollowingStyles';
 
 const Following = () => {
   const { id } = useParams();
 
   const [user, setUser] = useState([]);
   const [following, setFollowing] = useState([]);
-
-  const location = useLocation();
-
-  const navigate = useNavigate();
-
-  const backButtonRoute = location.state?.prevPath;
-  const [currentUserfollowing, SetCurrentUserFollowing] = useState([]);
-
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [page, setPage] = useState(1);
+  const [reachedEnd, setReachedEnd] = useState(false);
+  const [followingHoverStates, setFollowingHoverStates] = useState({});
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+    const fetchFollowingData = async () => {
+      try {
+        const url = `/following/${id}/?page=${page}`;
+        const response = await api.get(url);
+        setFollowing((prevFollowing) => [
+          ...prevFollowing,
+          ...response.data.results,
+        ]);
+        if (response.data.results.length === 0) {
+          setReachedEnd(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  var idUser = localStorage.getItem("idUser");
+    fetchFollowingData();
+  }, [id, page]);
 
   useEffect(() => {
-    async function userUtility() {
-      await api.get(`/usuarios/${id}/`).then((response) => {
+    const fetchUserData = async () => {
+      try {
+        const url = `/usuarios/${id}/`;
+        const response = await api.get(url);
         setUser(response.data);
-      });
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-      const UserfollowingResponse = await api.get(`/following/${id}/`);
+    fetchUserData();
+  }, [id]);
 
-      const followingResponse = await api.get(`/usuarios/following/`);
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight =
+        "innerHeight" in window
+          ? window.innerHeight
+          : document.documentElement.offsetHeight;
+      const body = document.body;
+      const html = document.documentElement;
+      const docHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+      const windowBottom = windowHeight + window.scrollY;
 
-      SetCurrentUserFollowing(followingResponse.data)
-      setFollowing(UserfollowingResponse.data)
+      if (windowBottom >= docHeight && !reachedEnd) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [reachedEnd]);
+
+  const unfollow = async (id) => {
+    try {
+      const url = `/usuarios/${id}/unfollow/`;
+      await api.post(url, null);
+
+      setFollowing((prevFollowing) =>
+        prevFollowing.map((following) =>
+          following.id === id ? { ...following, is_followed: false } : following
+        )
+      );
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    userUtility();
-  }, [idUser]);
+  const follow = async (id) => {
+    try {
+      const url = `/usuarios/${id}/follow/`;
+      await api.post(url, null);
+
+      setFollowing((prevFollowing) =>
+        prevFollowing.map((following) =>
+          following.id === id ? { ...following, is_followed: true } : following
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <>
-       {(window.innerWidth > 760) ?
-        <HeaderDesktop />
-        :
+    <div className="container mx-auto max-w-[1580px]">
+      <Header />
 
-        <Header />
-      }
-      <div className="content-all">
-        {windowSize.width < 680 ? (
-          <Menu />
-        ) : (
-          <div className="left-content">
-            <Menu />
-          </div>
-        )}
-
-        <div className="content-box-profile">
-          <div className="followers-info">
-            <Link
-              className="back-btn"
-              to={backButtonRoute}
-              style={{ textDecoration: "none", color: "#fff" }}
-            >
-              <MdArrowBack size={32} className="back-icon" />
-            </Link>
-
-            <h1>{user.nickname}</h1>
-          </div>
-
-          <div className="tabs-profile">
-            <Link
-              to={`/followers/${id}`}
-              state={{
-                prevPath: backButtonRoute
-              }}
-              style={{ textDecoration: "none", color: "#fff" }}
-            >
-              <p className="tab-profile">Seguidores</p>
-            </Link>
-
-            <Link
-              to={`/following/${id}`}
-              state={{
-                prevPath: backButtonRoute
-              }}
-              style={{ textDecoration: "none", color: "#fff" }}
-            >
-              <p style={{backgroundColor: '#4b4949'}} className="tab-profile">Seguindo</p>
-            </Link>
-          </div>
-          <div className="followers-info-content">
-            {following.map((followingUser) => (
-              <div key={followingUser.id}>
-                <CardFollower
-                  isFollower={currentUserfollowing.some(
-                    (user) => user.id === followingUser.id
-                  )}
-                  id={followingUser.id}
-                  nickname={followingUser.nickname}
-                  isUser={followingUser.id == idUser}
-                  profile_image={followingUser.profile_image}
-                />
-              </div>
-            ))}
-          </div>
+      <div className="mx-auto flex">
+        <div className="w-1/4 hidden sm:block mt-10">
+          <Menu selectedOption={"2"} />
         </div>
 
-        <div className="right-content"></div>
+        <div className="w-full sm:w-1/2 p-2">
+          <h2 className="text-lg font-bold mt-8 mb-8">
+            Usuários que {user?.nickname} segue
+          </h2>
+          {following.map((userData) => (
+            <li
+              key={userData.id}
+              className="w-full cursor-pointer bg-white rounded-xl mt-2 p-0 mb-4 shadow-lg h-[80px] hover:bg-gray-100 flex items-center gap-2"
+            >
+              <div className="flex">
+                <img
+                  className="w-20 h-30 p-2 rounded-xl object-cover"
+                  src={userData?.profile_image}
+                  alt={userData.nickname}
+                />
+                <div className="flex items-center gap-1">
+                  <Link
+                    to={`/user/${userData.id}`}
+                    style={{ textDecoration: "none" }}
+                    className="flex"
+                  >
+                    <h2 className="overflow-wrap break-word text-justify hover:underline">
+                      {userData.nickname}
+                    </h2>
+                  </Link>
+                </div>
+              </div>
+
+              {userData.is_followed ? (
+                <StyledButton
+                  onMouseEnter={() =>
+                    setFollowingHoverStates((prevStates) => ({
+                      ...prevStates,
+                      [userData.id]: true,
+                    }))
+                  }
+                  onMouseLeave={() =>
+                    setFollowingHoverStates((prevStates) => ({
+                      ...prevStates,
+                      [userData.id]: false,
+                    }))
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    unfollow(userData.id);
+                  }}
+                  isFollowed
+                >
+                  {followingHoverStates[userData.id]
+                    ? "Deixar de Seguir"
+                    : "Seguindo"}
+                </StyledButton>
+              ) : (
+                <StyledButton onClick={() => follow(userData.id)}>
+                  Seguir
+                </StyledButton>
+              )}
+            </li>
+          ))}
+        </div>
+
+        <div className="w-1/4 hidden sm:block"></div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -3,26 +3,25 @@ import Menu from "../../components/menu";
 import api from "../../api";
 import Header from "../../components/header";
 import HeaderDesktop from "../../components/headerDesktop";
-import "./styles.css";
 
 import CardFollower from "../../components/CardFollower";
 
 import { MdArrowBack } from "react-icons/md";
 
-import { Link, useNavigate, useParams, useLocation  } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 
-const Followers = () => {
-
+const Following = () => {
   const { id } = useParams();
 
   const [user, setUser] = useState([]);
-  const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
+
   const location = useLocation();
 
   const navigate = useNavigate();
 
   const backButtonRoute = location.state?.prevPath;
+  const [currentUserfollowing, SetCurrentUserFollowing] = useState([]);
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -43,28 +42,25 @@ const Followers = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  
+
   var idUser = localStorage.getItem("idUser");
 
   useEffect(() => {
     async function userUtility() {
-      try {
-        const userResponse = await api.get(`/usuarios/${id}/`);
-        
-        const followersResponse = await api.get(`/followers/${id}/`);
+      await api.get(`/usuarios/${id}/`).then((response) => {
+        setUser(response.data);
+      });
 
-        const followingResponse = await api.get(`/usuarios/following/`);
+      const UserfollowingResponse = await api.get(`/following/${id}/`);
 
-        setUser(userResponse.data);
-        setFollowers(followersResponse.data);
-        setFollowing(followingResponse.data);
-      } catch (error) {
-        console.log(error);
-      }
+      const followingResponse = await api.get(`/usuarios/following/`);
+
+      SetCurrentUserFollowing(followingResponse.data)
+      setFollowing(UserfollowingResponse.data)
     }
 
     userUtility();
-  }, []);
+  }, [idUser]);
 
   return (
     <>
@@ -104,7 +100,7 @@ const Followers = () => {
               }}
               style={{ textDecoration: "none", color: "#fff" }}
             >
-              <p style={{backgroundColor: '#4b4949'}} className="tab-profile">Seguidores</p>
+              <p className="tab-profile">Seguidores</p>
             </Link>
 
             <Link
@@ -114,30 +110,24 @@ const Followers = () => {
               }}
               style={{ textDecoration: "none", color: "#fff" }}
             >
-              <p className="tab-profile">Seguindo</p>
+              <p style={{backgroundColor: '#4b4949'}} className="tab-profile">Seguindo</p>
             </Link>
           </div>
-          {followers.length > 0 && (
-            <div className="followers-info-content">
-              {followers.map((follower) => (
-                <div key={follower.id}>
-                  {console.log(
-                    following,
-                    following.some((user) => user.id === follower.id)
+          <div className="followers-info-content">
+            {following.map((followingUser) => (
+              <div key={followingUser.id}>
+                <CardFollower
+                  isFollower={currentUserfollowing.some(
+                    (user) => user.id === followingUser.id
                   )}
-                  <CardFollower
-                    isFollower={following.some(
-                      (user) => user.id === follower.id
-                    )}
-                    id={follower.id}
-                    nickname={follower.nickname}
-                    isUser={follower.id == idUser}
-                    profile_image={follower.profile_image}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+                  id={followingUser.id}
+                  nickname={followingUser.nickname}
+                  isUser={followingUser.id == idUser}
+                  profile_image={followingUser.profile_image}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="right-content"></div>
@@ -146,4 +136,4 @@ const Followers = () => {
   );
 };
 
-export default Followers;
+export default Following;

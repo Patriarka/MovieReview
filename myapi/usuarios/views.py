@@ -142,8 +142,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def following_by_id(self, request, user_id):
         connections = Connection.objects.filter(usuario_alpha=user_id)
         following = [connection.usuario_beta for connection in connections]
-        serializer = self.get_serializer(following, many=True)
-        return Response(serializer.data)
+        
+        paginator = UserPagination()
+        paginated_following = paginator.paginate_queryset(following, request)
+        
+        serializer = self.get_serializer(paginated_following, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def followers_by_id(self, request, user_id):
