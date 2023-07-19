@@ -149,8 +149,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def followers_by_id(self, request, user_id):
         connections = Connection.objects.filter(usuario_beta=user_id)
         followers = [connection.usuario_alpha for connection in connections]
-        serializer = self.get_serializer(followers, many=True)
-        return Response(serializer.data)
+        
+        paginator = UserPagination()
+        paginated_followers = paginator.paginate_queryset(followers, request)
+        
+        serializer = self.get_serializer(paginated_followers, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
     def super_reviewers(self, request):
         super_reviewers = User.objects.annotate(num_publications=Count('publication')).filter(num_publications__gte=5, super_reviewer=True).order_by('-num_publications')
