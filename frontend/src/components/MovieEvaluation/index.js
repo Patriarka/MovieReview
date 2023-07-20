@@ -6,6 +6,7 @@ import { IoIosAdd } from "react-icons/io";
 
 import { FaStar } from "react-icons/fa";
 import { IoMdEye } from "react-icons/io";
+import { MdInsertComment } from "react-icons/md";
 
 import api from "../../api";
 
@@ -201,9 +202,15 @@ const MovieEvaluation = ({ movie }) => {
           onMouseEnter={() => setIsFavoriteHovered(true)}
           onMouseLeave={() => setIsFavoriteHovered(false)}
         >
-          <FaStar color={isMovieOnFavoriteList ? "#fadb14" : "white"} size={16} />
+          <FaStar
+            color={isMovieOnFavoriteList ? "#fadb14" : "white"}
+            size={16}
+          />
           {isMovieOnFavoriteList ? (
-            <label className="text-xs cursor-pointer"> {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}</label>
+            <label className="text-xs cursor-pointer">
+              {" "}
+              {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}
+            </label>
           ) : (
             <label className="text-xs cursor-pointer"> Favoritar</label>
           )}
@@ -218,11 +225,13 @@ const MovieEvaluation = ({ movie }) => {
           onMouseLeave={() => setIsWatchlistHovered(false)}
         >
           <IoMdEye color={isMovieOnWatchList ? "#e90074" : "white"} size={17} />
-          
+
           {isMovieOnWatchList ? (
             <label className="text-xs cursor-pointer">
               {" "}
-              {isWatchlistHovered ? "Remover da Watchlist" : "Adicionado na Watchlist"}
+              {isWatchlistHovered
+                ? "Remover da Watchlist"
+                : "Adicionado na Watchlist"}
             </label>
           ) : (
             <label className="text-xs cursor-pointer">
@@ -230,6 +239,17 @@ const MovieEvaluation = ({ movie }) => {
               Adicionar na Watchlist
             </label>
           )}
+        </button>
+
+        <button
+          className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black hover:bg-[#303030] p-2 gap-2"
+        >
+          <MdInsertComment
+            color={"white"}
+            size={17}
+          />
+
+          <label className="text-xs cursor-pointer"> Visualizar Críticas</label>
         </button>
 
         <button

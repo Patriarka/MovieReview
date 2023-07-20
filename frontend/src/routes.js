@@ -14,7 +14,7 @@ import Users from './pages/users';
 import Home from './pages/home';
 import Movie from './pages/movie';
 import User from './pages/user';
-import Favoritos from './pages/favoritos';
+import Favorites from './pages/favorites';
 import Followers from './pages/followers';
 import Following from './pages/following';
 import Watchlist from './pages/watchlist';
@@ -75,7 +75,7 @@ export default function Router() {
                 />
                 <Route 
                     path="/favoritos/:id" 
-                    element={<PrivateRoute> <Favoritos /> </PrivateRoute>}
+                    element={<PrivateRoute> <Favorites /> </PrivateRoute>}
                 />
                 <Route 
                     path="/followers/:id" 
