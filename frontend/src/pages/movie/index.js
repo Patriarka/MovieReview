@@ -66,7 +66,7 @@ const Movie = () => {
         </div>
 
         <div className="w-full">
-          <div className="pt-8 mx-4">
+          <div className="pt-8 mx-1">
             <h2 className="text-xl font-bold">
               {movie?.title} (
               {movie.release_date

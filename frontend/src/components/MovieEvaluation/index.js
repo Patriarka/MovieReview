@@ -4,6 +4,8 @@ import { Input, Modal } from "antd";
 
 import { IoIosAdd } from "react-icons/io";
 
+import { Link } from 'react-router-dom';
+
 import { FaStar } from "react-icons/fa";
 import { IoMdEye } from "react-icons/io";
 import { MdInsertComment } from "react-icons/md";
@@ -241,16 +243,16 @@ const MovieEvaluation = ({ movie }) => {
           )}
         </button>
 
-        <button
-          className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
-        >
-          <MdInsertComment
-            color={"black"}
-            size={17}
-          />
+        <Link to={`/reviews/${movie.id}`}>
+          <button className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2">
+            <MdInsertComment color={"black"} size={17} />
 
-          <label className="text-xs cursor-pointer"> Visualizar Críticas</label>
-        </button>
+            <label className="text-xs cursor-pointer">
+              {" "}
+              Visualizar Críticas
+            </label>
+          </button>
+        </Link>
 
         <button
           className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex items-center w-full bg-[#d30069] hover:bg-[#e90074] p-2 gap-2"
