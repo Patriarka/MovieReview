@@ -92,7 +92,7 @@ const Profile = () => {
         </div>
 
         <div className="w-full sm:w-1/2 p-2">
-          <div className="flex gap-2 mt-8">
+          <div className="flex gap-2 mt-8 flex-col lg:flex-row">
             <img
               className="w-40 h-50 rounded-full"
               src={user?.profile_image}

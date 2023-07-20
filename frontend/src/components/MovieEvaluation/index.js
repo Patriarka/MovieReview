@@ -197,13 +197,13 @@ const MovieEvaluation = ({ movie }) => {
       </Modal>
       <div className="flex-col gap-2 w-full max-w-[270px] mx-auto p-2 rounded-xl justify-around">
         <button
-          className="cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
+          className="cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
           onClick={isMovieOnFavoriteList ? handleDisfavor : handleFavorite}
           onMouseEnter={() => setIsFavoriteHovered(true)}
           onMouseLeave={() => setIsFavoriteHovered(false)}
         >
           <FaStar
-            color={isMovieOnFavoriteList ? "#fadb14" : "white"}
+            color={isMovieOnFavoriteList ? "#fadb14" : "black"}
             size={16}
           />
           {isMovieOnFavoriteList ? (
@@ -217,14 +217,14 @@ const MovieEvaluation = ({ movie }) => {
         </button>
 
         <button
-          className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
+          className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
           onClick={
             isMovieOnWatchList ? handleRemovetoWatchlist : handleAddToWatchlist
           }
           onMouseEnter={() => setIsWatchlistHovered(true)}
           onMouseLeave={() => setIsWatchlistHovered(false)}
         >
-          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "white"} size={17} />
+          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "black"} size={17} />
 
           {isMovieOnWatchList ? (
             <label className="text-xs cursor-pointer">
@@ -242,10 +242,10 @@ const MovieEvaluation = ({ movie }) => {
         </button>
 
         <button
-          className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black hover:bg-[#303030] p-2 gap-2"
+          className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
         >
           <MdInsertComment
-            color={"white"}
+            color={"black"}
             size={17}
           />
 

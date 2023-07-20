@@ -66,7 +66,7 @@ const Movie = () => {
         </div>
 
         <div className="w-full">
-          <div className="pt-8">
+          <div className="pt-8 mx-4">
             <h2 className="text-xl font-bold">
               {movie?.title} (
               {movie.release_date
@@ -124,7 +124,7 @@ const Movie = () => {
           </div>
         </div>
 
-        <div className="w-1/2 hidden sm:block">
+        <div className="w-1/2 hidden lg:block">
           <MovieEvaluation movie={movie} />
         </div>
       </div>
