@@ -52,7 +52,7 @@ const Watchlist = () => {
         <div className="w-full sm:w-1/2 p-2">
           <div className="mt-8">
             <h2 className="text-lg font-bold mt-4 mb-4">Assistir no Futuro</h2>
-            <div className="w-full grid grid-cols-7 gap-x-1 gap-y-6">
+            <div className="w-full grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-x-1 gap-y-6">
               {watchlist.length > 0 &&
                 watchlist.map((movie) => (
                   <Link

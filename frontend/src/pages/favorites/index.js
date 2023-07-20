@@ -12,7 +12,7 @@ import api from "../../api";
 
 import posternotfound from "../../assets/posternotfound.png";
 
-const Favoritos = () => {
+const Favorites = () => {
   const { id } = useParams();
 
   const [favorites, setFavorites] = useState([]);
@@ -49,7 +49,7 @@ const Favoritos = () => {
         <div className="w-full sm:w-1/2 p-2">
           <div className="mt-8">
             <h2 className="text-lg font-bold mt-4 mb-4">Favoritos</h2>
-            <div className="w-full grid grid-cols-7 gap-x-1 gap-y-6">
+            <div className="w-full grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-x-1 gap-y-6">
               {favorites.length > 0 &&
                 favorites.map((movie) => (
                   <Link
@@ -91,4 +91,4 @@ const Favoritos = () => {
   );
 };
 
-export default Favoritos;
+export default Favorites;

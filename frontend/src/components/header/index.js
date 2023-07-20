@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { StyledInput, StyledSelect } from "../../styles/pages/HomeStyles.js";
+import { StyledInput, StyledSelect } from "../../styles/components/HeaderStyles.js";
 
 import {
   SearchOutlined,

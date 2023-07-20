@@ -4,8 +4,11 @@ import { Input, Modal } from "antd";
 
 import { IoIosAdd } from "react-icons/io";
 
+import { Link } from 'react-router-dom';
+
 import { FaStar } from "react-icons/fa";
 import { IoMdEye } from "react-icons/io";
+import { MdInsertComment } from "react-icons/md";
 
 import api from "../../api";
 
@@ -196,33 +199,41 @@ const MovieEvaluation = ({ movie }) => {
       </Modal>
       <div className="flex-col gap-2 w-full max-w-[270px] mx-auto p-2 rounded-xl justify-around">
         <button
-          className="cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
+          className="cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
           onClick={isMovieOnFavoriteList ? handleDisfavor : handleFavorite}
           onMouseEnter={() => setIsFavoriteHovered(true)}
           onMouseLeave={() => setIsFavoriteHovered(false)}
         >
-          <FaStar color={isMovieOnFavoriteList ? "#fadb14" : "white"} size={16} />
+          <FaStar
+            color={isMovieOnFavoriteList ? "#fadb14" : "black"}
+            size={16}
+          />
           {isMovieOnFavoriteList ? (
-            <label className="text-xs cursor-pointer"> {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}</label>
+            <label className="text-xs cursor-pointer">
+              {" "}
+              {isFavoriteHovered ? "Desfavoritar" : "Favoritado"}
+            </label>
           ) : (
             <label className="text-xs cursor-pointer"> Favoritar</label>
           )}
         </button>
 
         <button
-          className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex w-full bg-black-30 hover:bg-black-50 p-2 gap-2"
+          className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2"
           onClick={
             isMovieOnWatchList ? handleRemovetoWatchlist : handleAddToWatchlist
           }
           onMouseEnter={() => setIsWatchlistHovered(true)}
           onMouseLeave={() => setIsWatchlistHovered(false)}
         >
-          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "white"} size={17} />
-          
+          <IoMdEye color={isMovieOnWatchList ? "#e90074" : "black"} size={17} />
+
           {isMovieOnWatchList ? (
             <label className="text-xs cursor-pointer">
               {" "}
-              {isWatchlistHovered ? "Remover da Watchlist" : "Adicionado na Watchlist"}
+              {isWatchlistHovered
+                ? "Remover da Watchlist"
+                : "Adicionado na Watchlist"}
             </label>
           ) : (
             <label className="text-xs cursor-pointer">
@@ -231,6 +242,17 @@ const MovieEvaluation = ({ movie }) => {
             </label>
           )}
         </button>
+
+        <Link to={`/reviews/${movie.id}`}>
+          <button className="mt-2 cursor-pointer b-none rounded-md text-black font-bold flex w-full bg-[#f8f8ff] hover:bg-[#fdfdfd] p-2 gap-2">
+            <MdInsertComment color={"black"} size={17} />
+
+            <label className="text-xs cursor-pointer">
+              {" "}
+              Visualizar Críticas
+            </label>
+          </button>
+        </Link>
 
         <button
           className="mt-2 cursor-pointer b-none rounded-md text-white font-bold flex items-center w-full bg-[#d30069] hover:bg-[#e90074] p-2 gap-2"
