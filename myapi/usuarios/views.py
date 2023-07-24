@@ -296,6 +296,8 @@ class PublicationViewSet(viewsets.ModelViewSet):
             comment_text=comment_text
         )
         
+        serializer = CommentSerializer(comment)
+        
         if publication.user_id != user:
             message = f'{user.nickname} comentou sua publicação'
             
@@ -308,7 +310,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
                 message=message
             )
 
-        return Response({'success': 'Comentário feito com sucesso!'}, status=status.HTTP_201_CREATED)
+        return Response({'success': 'Comentário feito com sucesso!', 'comment': serializer.data}, status=status.HTTP_201_CREATED)
     
     def get_comments_by_pub_id(self, request, publication_id=None):
         try:

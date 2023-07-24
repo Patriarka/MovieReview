@@ -216,13 +216,6 @@ const CreatePublication = ({ setPublications }) => {
                 </div>
               )}
             </div>
-
-            {/* <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Selecione ou arraste uma imagem</p>
-            </Dragger> */}
           </Modal>
         </div>
       </div>
