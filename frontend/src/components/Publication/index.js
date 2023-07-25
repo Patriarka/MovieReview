@@ -303,14 +303,14 @@ const Publication = ({
                 {comments.map((comment) => (
                   <div className="flex gap-2">
                     <img
-                      className="w-[32px] h-[38px] rounded-xl"
-                      src="https://img.r7.com/images/2014/06/09/5ktvr6so5o_4g94bvv6r6_file.jpg"
-                      alt="paodoce"
+                      className="w-[32px] h-[32px] rounded-full"
+                      src={comment.user_profile_image}
+                      alt="user_image"
                     />
                     <div className="flex gap-2 max-w-max bg-gray-100 rounded-xl mb-2 p-2">
                       <div className="flex-col">
                         <h1 className="cursor-pointer text-xs text-black font-bold hover:text-gray-500">
-                          José da Silva
+                          {comment.user_nickname}
                         </h1>
                         <p>{comment.comment_text}</p>
                       </div>

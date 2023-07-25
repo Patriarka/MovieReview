@@ -292,6 +292,8 @@ class PublicationViewSet(viewsets.ModelViewSet):
         
         comment = Comment.objects.create(
             user_id=user,
+            user_nickname=user.nickname,
+            user_profile_image=user.profile_image,
             publication_id=publication,
             comment_text=comment_text
         )

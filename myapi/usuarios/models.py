@@ -124,6 +124,8 @@ class Comment(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)   
     comment_text = models.CharField(max_length=500)
     date = models.DateTimeField(default=timezone.now)
+    user_nickname = models.CharField(max_length=55)
+    user_profile_image = models.URLField(blank=True, default="https://i.imgur.com/piVx6dg.png")
 
 class WatchList(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
