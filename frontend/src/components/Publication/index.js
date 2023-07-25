@@ -43,12 +43,22 @@ const Publication = ({
 
   useEffect(() => {
     const fetchCommentsData = async () => {
-      const url = `/comentarios/${idPost}/?page=${commentsPage}`;
-      const response = await api.get(url);
-      setComments((prevComments) => [
-        ...prevComments,
-        ...response.data.results,
-      ]);
+      try {
+        const url = `/comentarios/${idPost}/?page=${commentsPage}`;
+        const response = await api.get(url);
+
+        if(response.data.count <= (commentsPage * 5))
+        {
+          setCommentsPage(-1)
+        }
+
+        setComments((prevComments) => [
+          ...prevComments,
+          ...response.data.results,
+        ]);
+      } catch(error) {
+        console.log(error);
+      }
     };
 
     fetchCommentsData();
@@ -317,14 +327,14 @@ const Publication = ({
                     </div>
                   </div>
                 ))}
-                {/* {comments?.length > 0 && (
+                {(comments?.length > 0 && commentsPage !== -1) && (
                   <p
                     className="cursor-pointer"
                     onClick={() => setCommentsPage((prevPage) => prevPage + 1)}
                   >
                     Ver mais
                   </p>
-                )} */}
+                )}
               </div>
             </div>
 
